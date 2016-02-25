@@ -4,7 +4,7 @@ var MessagePromise, abortHandler;
 
 module.exports = MessagePromise = function(parent, message){
   this.skel = message;
-  parent._proxies.once(this.skel.id, abortHandler.bind(this));
+  parent._pending.once(this.skel.id, abortHandler.bind(this));
   this.parent = parent;
   this.finished = false;
 };
@@ -24,14 +24,14 @@ MessagePromise.prototype.resolve = function(data){
   this.finished = true;
   this.skel.data = data;
   this.parent._rSendFn(this.skel);
-  this.parent._proxies.removeAllListeners(this.skel.id);
+  this.parent._pending.removeAllListeners(this.skel.id);
 };
 
 MessagePromise.prototype.reject = function(error){
   this.finished = true;
   this.skel.error = error;
   this.parent._rSendFn(this.skel);
-  this.parent._proxies.removeAllListeners(this.skel.id);
+  this.parent._pending.removeAllListeners(this.skel.id);
 };
 
 abortHandler = function(message){

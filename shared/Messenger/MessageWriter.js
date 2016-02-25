@@ -1,7 +1,7 @@
 'use strict';
 
 var EventEmitter = require('events').EventEmitter;
-
+var mutil = require('./message-util');
 var MissingMessageError = require('../errors/runtime/MissingMessageError');
 
 /**
@@ -13,13 +13,12 @@ var MissingMessageError = require('../errors/runtime/MissingMessageError');
 */
 var MessageWriter;
 module.exports = MessageWriter = function(wSendFn){
-  EventEmitter.call(this);
-  if(typeof this.getListeners == 'undefined'){
-    this.getListeners = this.listeners.bind(this);
-  }
 
-  this.wSendFn = wSendFn;
+  this._pending = new EventEmitter();
+
+  this._wSendFn = wSendFn;
   this.queue = [];
+  this.returnQueue = [];
   this._ready = false;
 
   // method calls that are sent and waiting an answer
@@ -36,10 +35,8 @@ MessageWriter.prototype.constructor = MessageWriter;
 */
 MessageWriter.prototype.ready = function(){
   this._ready = true;
-  while(this.queue.length > 0){
-    this.wSendFn(this.queue.shift());
-  }
-
+  while(this.queue.length > 0) this._sendMessage(this.queue.shift());
+  while(this.returnQueue.length > 0) this._returnMessage(this.returnQueue.shift());
   return this;
 };
 
@@ -63,9 +60,16 @@ MessageWriter.prototype.pause = function(){
   @returns {undefined}
 */
 MessageWriter.prototype._returnMessage = function(message){
-  if(this.getListeners(message.id).length == 0)
+  if(message.method === 'abort') return this.abort(message);
+  if(this._pending.listeners(message.id).length == 0)
     throw new Error('non Existant Message');
-  this.emit(message.id, message.error, message.data);
+  if(!this._ready){
+    this.returnQueue.push(message);
+  }else{
+    this._pending.emit(message.id, message.error, message.data);
+  }
+
+  return this;
 };
 
 /**
@@ -77,8 +81,7 @@ MessageWriter.prototype._returnMessage = function(message){
   @returns {MessageWriter} self
 */
 MessageWriter.prototype.trigger = function(path, data){
-  var mutil = require('./message-util');
-  var skel = mutil.createSkeleton('emit', path);
+  var skel = mutil.createSkeleton('trigger', path);
   skel.data = data;
   this._sendMessage(skel);
   return this;
@@ -102,18 +105,21 @@ MessageWriter.prototype.trigger = function(path, data){
 */
 MessageWriter.prototype.request = function(path, data){
   var Request = require('./writer-messages/Request');
-  return new Request(this, path, data);
+  var message = mutil.prepMessage(mutil.createSkeleton('request', path), data);
+  return new Request(this, message);
 };
+
 /**
   Open a direct connection over a path. This enables multiple sends and multiple recieves.
   @function
   @memberof MessageWriter
   @param {string} path - the path you wish to open up the stream on
+  @param {any} data - data you would like to initially send
   @returns {MessageStream} Returns an abortable MessageStream
 `*/
-MessageWriter.prototype.stream = function(path){
+MessageWriter.prototype.stream = function(path, data){
   var MessageStream = require('./writer-messages/Stream');
-  return new MessageStream(this, path);
+  return new MessageStream(this, path, data);
 };
 
 /**
@@ -138,18 +144,21 @@ MessageWriter.prototype.duplex = function(path){
 MessageWriter.prototype.abort = function(message){
   if(!message) throw MissingMessageError(message);
   var id = message.id ? message.id : message;
-  if(this.listeners(id).length == 0)
-    throw new MissingMessageError(message);
+  if(this.listeners(id).length == 0){
+    // this is fine since I would rather have redundancy than none
+    return console.warn('already aborted');
+  }
+
   this.removeAllListeners(id);
-  var skel = message.skel;
-  skel.type = 'abort';
+  var skel = message;
+  skel.method = 'abort';
   this._sendMessage(skel);
   return this;
 };
 
 MessageWriter.prototype._sendMessage = function(message){
   if(this._ready){
-    this.wSendFn(message);
+    this._wSendFn(message);
   }else{
     //if there is an error queue it for later when socket connects
     this.queue.push(message);

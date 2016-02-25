@@ -2,10 +2,10 @@
 
 var genRandom = require('../random.js');
 
-module.exports.createSkeleton = function(type, path){
+module.exports.createSkeleton = function(method, path){
   return {
     id: genRandom(),
-    type: type,
+    method: method,
     path: path,
   };
 };

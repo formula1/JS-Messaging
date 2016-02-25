@@ -5,25 +5,30 @@ var mutil = require('../message-util');
 
 var MessageStream, write, read;
 
-module.exports = MessageStream = function(parent, path){
-  this.parent = parent;
-  this.skel = mutil.createSkeleton('stream', path);
+module.exports = MessageStream = function(parent, path, data){
   Duplex.call(this, {
+    objectMode: true,
     readableObjectMode:true,
+    writableObjectMode:true,
     write: write.bind(this),
   });
-  parent.on(this.skel.id, read.bind(this));
-  parent._sendMessage(mutil.prepMessage(this.skel));
-  this.skel.type = 'proxy';
+  this.parent = parent;
+  this.skel = mutil.createSkeleton('stream', path);
+  parent._pending.on(this.skel.id, read.bind(this));
+  parent._sendMessage(mutil.prepMessage(this.skel, data));
 };
 
 MessageStream.prototype = Object.create(Duplex.prototype);
 MessageStream.prototype.constructor = MessageStream;
 
 MessageStream.prototype.abort = function(){
-  this.parent.abort(this);
+  this.parent.abort(this.message);
   this.push(null);
-  this.emit('close');
+  this.end();
+};
+
+MessageStream.prototype._read = function(){
+  return false;
 };
 
 write = function(chunk, encoding, next){

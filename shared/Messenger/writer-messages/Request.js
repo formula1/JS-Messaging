@@ -1,25 +1,24 @@
 'use strict';
 
-var mutil = require('../message-util');
-var MessagePromise, callback;
+var MessagePromise;
 
-module.exports = MessagePromise = function(parent, path, data){
-  Promise.call(this);
+module.exports = MessagePromise = function(parent, message){
   this.parent = parent;
-  this.skel = mutil.createSkeleton('request', path);
-  parent.once(this.skel.id, callback.bind(this));
-  parent._sendMessage(mutil.prepMessage(this.skel, data));
+  Promise.call(this, function(res, rej){
+    parent._pending.once(message.id, function(err, ret){
+      if(err) return rej(err);
+      res(ret);
+    });
+
+    console.log('ABOUT TO SEND MESSAGE');
+
+    parent._sendMessage(message);
+  });
 };
 
 MessagePromise.prototype = Object.create(Promise.prototype);
 MessagePromise.prototype.constructor = MessagePromise;
 
 MessagePromise.prototype.abort = function(){
-  this.parent.abort(this);
-  this.reject(new Error('Aborted'));
-};
-
-callback = function(error, data){
-  if(error) return this.reject(error);
-  this.resolve(data);
+  this.parent.abort(this.skel);
 };

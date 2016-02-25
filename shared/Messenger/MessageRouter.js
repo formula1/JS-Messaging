@@ -22,7 +22,7 @@ module.exports = MessageRouter = function(rSendFn){
   if(typeof rSendFn !== 'function')
     throw new AbstractMethodError('Need a manner to send back');
   this._routes = [];
-  this._proxies = new EventEmitter();
+  this._pending = new EventEmitter();
   this._returns = new EventEmitter();
   this._rSendFn = rSendFn;
 };
@@ -59,12 +59,12 @@ MessageRouter.prototype.use = function(path, fn){
 var createResponder;
 MessageRouter.prototype.route = function(message){
   if(message.method === 'abort'){
-    if(!(message.id in this._proxies)){
+    if(!(message.id in this._pending)){
       // we are all clean, no errors necessary
       console.warn('already aborted', message.id);
     }
 
-    this._proxies.emit(message.id, 'abort');
+    this._pending.emit(message.id, 'abort');
     return;
   }
 
@@ -72,8 +72,8 @@ MessageRouter.prototype.route = function(message){
     // Might want to check if a particular ID had been aborted
     // This can be done much cleaner if we tell the otherside what ID to use (based off timestamp)
     // in this manner they can never use old IDs.
-    if(this._proxies.listeners(message.id).length){
-      return this._proxies.emit(message.id, message);
+    if(this._pending.listeners(message.id).length){
+      return this._pending.emit(message.id, message);
     }
   }
 
@@ -97,7 +97,7 @@ MessageRouter.prototype.route = function(message){
   }).catch(function(err){
     if(err === 'stop') return;
     message.error = err;
-    delete this._proxies[message.id];
+    delete this._pending[message.id];
     this._rSendFn(message);
     throw err;
   }.bind(this));

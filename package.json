@@ -5,11 +5,10 @@
   "main": "./node/index.js",
   "browser": "./browser/index.js",
   "scripts": {
-    "test": [
-      "node_modules/.bin/tap test/*/index.js",
-      "node_modules/.bin/jscs test/**/*.js shared/**/*.js node/**/*.js browser/**/*.js",
-      "node_modules/.bin/eslint test/**/*.js shared/**/*.js node/**/*.js browser/**/*.js"
-    ]
+    "test": "npm run tap && npm run eslint && npm run jscs",
+    "eslint": "node_modules/.bin/eslint test/**/*.js shared/**/*.js node/**/*.js browser/**/*.js",
+    "jscs": "node_modules/.bin/jscs test/**/*.js shared/**/*.js node/**/*.js browser/**/*.js",
+    "tap": "node_modules/.bin/tap test/*/index.js"
   },
   "author": "formula1",
   "license": "ISC",

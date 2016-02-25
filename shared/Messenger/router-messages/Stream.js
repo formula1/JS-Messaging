@@ -13,7 +13,7 @@ module.exports = MessageStream = function(parent, message){
   });
   this.parent = parent;
   this.skel = message;
-  parent._proxies.on(this.skel.id, read.bind(this));
+  parent._pending.on(this.skel.id, read.bind(this));
   this.on('finished', this.abort.bind(this));
 };
 
@@ -21,7 +21,7 @@ MessageStream.prototype = Object.create(Duplex.prototype);
 MessageStream.prototype.constructor = MessageStream;
 
 MessageStream.prototype.abort = function(){
-  this.parent._proxies.removeAllListeners(this.skel.id);
+  this.parent._pending.removeAllListeners(this.skel.id);
   this.parent._rSendFn({
     method: 'abort',
     id: this.skel.id,
@@ -36,8 +36,7 @@ MessageStream.prototype._read = function(){
 };
 
 write = function(chunk, encoding, next){
-  var ret = mutil.prepMessage(this.skel, chunk);
-  this.parent._rSendFn(ret);
+  this.parent._rSendFn(mutil.prepMessage(this.skel, chunk));
   next();
 };
 
