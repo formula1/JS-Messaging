@@ -81,7 +81,7 @@ MessageWriter.prototype._returnMessage = function(message){
   @returns {MessageWriter} self
 */
 MessageWriter.prototype.trigger = function(path, data){
-  var skel = mutil.createSkeleton('trigger', path);
+  var skel = mutil.skeletonFactory('trigger', path);
   skel.data = data;
   this._sendMessage(skel);
   return this;
@@ -105,7 +105,7 @@ MessageWriter.prototype.trigger = function(path, data){
 */
 MessageWriter.prototype.request = function(path, data){
   var Request = require('./writer-messages/Request');
-  var message = mutil.prepMessage(mutil.createSkeleton('request', path), data);
+  var message = mutil.prepMessage(mutil.skeletonFactory('request', path), data);
   return new Request(this, message);
 };
 

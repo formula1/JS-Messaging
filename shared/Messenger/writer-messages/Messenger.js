@@ -7,7 +7,7 @@ var MessageChildDuplex, read, write;
 
 module.exports = MessageChildDuplex = function(parent, path){
   this.parent = parent;
-  this.skel = mutil.createSkeleton('messenger', path);
+  this.skel = mutil.skeletonFactory('messenger', path);
   Duplex.call(this, write.bind(this));
   parent.on(this.skel.id, read.bind(this));
   parent._sendMessage(mutil.prepMessage(this.skel));

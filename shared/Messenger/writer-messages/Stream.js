@@ -13,7 +13,7 @@ module.exports = MessageStream = function(parent, path, data){
     write: write.bind(this),
   });
   this.parent = parent;
-  this.skel = mutil.createSkeleton('stream', path);
+  this.skel = mutil.skeletonFactory('stream', path);
   parent._pending.on(this.skel.id, read.bind(this));
   parent._sendMessage(mutil.prepMessage(this.skel, data));
 };

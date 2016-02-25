@@ -5,7 +5,7 @@
   - Subclasses
     - Proxy Messenger - Simply passes on its data to another
     - Recoverable Messenger - If it disconnects, will store messages and attempt to reconnect
-    - Distributed Messenger - Uses not one but multiple individuals as possibly the same
+    - Distributed Messenger - Uses not one but multiple individuals as possibly the same peer
 - Manager
   - Must provide it with a Messenger class and notify it when there is a possible Messenger available
   - Subclasses
@@ -15,6 +15,12 @@
     - Enabling Manager - Provides a Permitted Manager with clients they can see and request
 - Enabler
   - A Manager type that facilitates Messengers knowing about eachother
+
+# Features I'd like to ensure exist
+- Machines can change IP and still effectively communicate with one another over UDP
+  - This involves maintaining a Pong/Pong with a unique Identifier
+- Machines can go offline then come back online as the same individual
+  - This involves maintaining a queue when 'not ready'
 
 # Implementations Intended to be Provided
 
