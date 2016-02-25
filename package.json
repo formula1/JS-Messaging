@@ -7,7 +7,8 @@
   "scripts": {
     "test": [
       "node_modules/.bin/tap test/*/index.js",
-      "node_modules/.bin/jscs test/**/*.js shared/**/*.js node/**/*.js browser/**/*.js"
+      "node_modules/.bin/jscs test/**/*.js shared/**/*.js node/**/*.js browser/**/*.js",
+      "node_modules/.bin/eslint test/**/*.js shared/**/*.js node/**/*.js browser/**/*.js"
     ]
   },
   "author": "formula1",
