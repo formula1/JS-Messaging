@@ -1,0 +1,28 @@
+{
+  "name": "js-message",
+  "version": "0.1.0",
+  "description": "Provides a common interface between webrtc datachannels, websockets, child_processes, webworkers, iframes and anything else that comes up",
+  "main": "./node/index.js",
+  "browser": "./browser/index.js",
+  "scripts": {
+    "test": [
+      "node_modules/.bin/tap test/*/index.js",
+      "node_modules/.bin/jscs test/**/*.js shared/**/*.js node/**/*.js browser/**/*.js"
+    ]
+  },
+  "author": "formula1",
+  "license": "ISC",
+  "dependencies": {
+    "path-to-regexp": "^1.2.1",
+    "websocket-driver": "^0.6.4",
+    "wrtc": "0.0.59"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "eslint": "^2.2.0",
+    "is-promise": "^2.1.0",
+    "phantomjs": "^1.9.19",
+    "sync-promise": "^1.0.1",
+    "tap": "^5.0.1"
+  }
+}
