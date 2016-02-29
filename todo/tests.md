@@ -2,6 +2,7 @@
 - Abort requests
 - Abort Stream
 - Sub Messenger
+- destroy function
 
 # Messenger Tests
 - Open

@@ -4,26 +4,23 @@ var MessageDuplex = require('../../shared/Messenger/MessageDuplex');
 var WinAbs;
 module.exports = WinAbs = function(context, origin){
 
-  this.origin = origin ? origin : '*';
+  this.origin = origin = origin ? origin : '*';
   MessageDuplex.call(this, function(message){
-    message.user = null;
-    this.context.postMessage(message, this.origin);
-  }.bind(this));
+    context.postMessage(message, origin);
+  });
 
   this.context = context;
-  window.addEventListener('message', this.handleMessage.bind(this));
-  this.ready();
+  window.addEventListener('message', function(message){
+    if(message.source != context) return;
+    message = message.data;
+    this.handleMessage(message);
+  }.bind(this));
+
   return this;
 };
 
 WinAbs.prototype = Object.create(MessageDuplex.prototype);
 WinAbs.prototype.constructor = WinAbs;
-
-WinAbs.prototype.handleMessage = function(message){
-  if(message.source != this.context) return;
-  message = message.data;
-  MessageDuplex.prototype.handleMessage.call(this, message, this.context);
-};
 
 WinAbs.getParent = function(){
   if(window.parent && window.parent != window){

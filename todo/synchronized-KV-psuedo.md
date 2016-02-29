@@ -1,0 +1,15 @@
+
+- Create (init value)
+  - Sends Command to all others
+    - Others may error back 'Cannot because it has already been defined'
+- Get Or Create (init value)
+  - Sends Command to others
+    - Others will respond with the value sent or the internal value
+- Update (new value)
+  - Sends Command to all others
+    - Others may error 'Recieved an Update with a late timestamp'
+      - Also provides the new value
+- Get
+  - This will almost never make network calls
+- Delete
+  - Remove the Value from all those involved in the network 

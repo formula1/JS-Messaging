@@ -2,6 +2,7 @@
 
 var MessageRouter = require('./MessageRouter.js');
 var MessageWriter = require('./MessageWriter.js');
+var EventEmitter = require('events').EventEmitter;
 var genRandom = require('../random');
 
 /**
@@ -37,20 +38,28 @@ module.exports = MessageDuplex = function(wSendFn, rSendFn){
   };
 
   MessageRouter.call(this, rSendFn);
-  this.rSendFn = this.rSendFn;
   MessageWriter.call(this, wSendFn);
-  this.wSendFn = this.wSendFn;
+  EventEmitter.call(this);
 };
 
 MessageDuplex.prototype = Object.create(MessageWriter.prototype);
-for(var i in MessageRouter.prototype){
-  if(i === 'constructor') continue;
-  if(i in MessageDuplex.prototype){
-    console.warn(i, 'interferes with other functions');
+var key;
+for(key in MessageRouter.prototype){
+  if(key in MessageDuplex.prototype){
+    console.warn(key, 'interferes with other functions');
     continue;
   }
 
-  MessageDuplex.prototype[i] = MessageRouter.prototype[i];
+  MessageDuplex.prototype[key] = MessageRouter.prototype[key];
+}
+
+for(key in EventEmitter.prototype){
+  if(key in MessageDuplex.prototype){
+    console.warn(key, 'interferes with other functions');
+    continue;
+  }
+
+  MessageDuplex.prototype[key] = EventEmitter.prototype[key];
 }
 
 /**
@@ -70,6 +79,20 @@ MessageDuplex.prototype._handleMessage = function(message, user){
     console.log('route');
     this.route(message, user);
   }
+};
+
+MessageDuplex.prototype.ready = function(){
+  this.emit('ready');
+  MessageWriter.prototype.ready.apply(this, arguments);
+};
+
+MessageDuplex.prototype.pause = function(){
+  this.emit('pause');
+  MessageWriter.prototype.pause.apply(this, arguments);
+};
+
+MessageDuplex.prototype.destroy = function(){
+  this.emit('destroy');
 };
 
 MessageDuplex.prototype.constructor = MessageDuplex;

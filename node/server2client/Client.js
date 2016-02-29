@@ -35,14 +35,14 @@ function Client(config, socket){
 
   this.driver.on('message', function(event){
     try{
-      _this.handleMessage(JSON.parse(event.data));
+      _this._handleMessage(JSON.parse(event.data));
     }catch(e){
       _this.emit('error', e);
     }
   });
 
   this.driver.on('error', this.emit.bind(this, 'error'));
-  this.driver.on('close', this.close.bind(this));
+  this.driver.on('close', this.destroy.bind(this));
   socket.pipe(this.driver.io).pipe(socket);
   if(config.readyState === -1){
     if(config.body){

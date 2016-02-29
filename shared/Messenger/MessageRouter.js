@@ -23,7 +23,6 @@ module.exports = MessageRouter = function(rSendFn){
     throw new AbstractMethodError('Need a manner to send back');
   this._routes = [];
   this._pending = new EventEmitter();
-  this._returns = new EventEmitter();
   this._rSendFn = rSendFn;
 };
 

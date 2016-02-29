@@ -16,3 +16,6 @@
   - I should be using highland more if I want to get in on this
 - Constructor / Piping
 - Use someone elses router?
+
+# Remove
+- Remove Ready/Paused Queue from Writer 

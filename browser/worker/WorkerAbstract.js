@@ -2,22 +2,23 @@
 
 var MessageDuplex = require('../../shared/Messenger/MessageDuplex');
 
-var WorkerAbstract, consumeMessage;
+var WorkerAbstract;
 
 module.exports = WorkerAbstract = function(context){
   if(typeof context === 'undefined'){
     throw new Error('A Worker Is needed');
   }
 
+  var _this = this;
+
   MessageDuplex.call(this, context.postMessage.bind(context));
-  context.addEventListener('message', consumeMessage.bind(this));
+  context.addEventListener('message', function(e){
+    _this.handleMessage(e.data[0]);
+  });
+
   this.ready();
 
   return this;
-};
-
-consumeMessage = function(e){
-  this.handleMessage(e.data[0]);
 };
 
 WorkerAbstract.prototype = Object.create(MessageDuplex.prototype);

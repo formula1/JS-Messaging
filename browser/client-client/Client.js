@@ -4,15 +4,16 @@ var WebRTC = require('wrtc');
 var MessageDuplex = require('../../shared/Messenger/MessageDuplex');
 
 var RTCPeerConnection = WebRTC.RTCPeerConnection;
+var NetworkInstance;
 
-function NetworkInstance(nethost, user){
+var registerChannel;
+
+module.exports = NetworkInstance = function(nethost, user){
   this.self = nethost.me;
   this.user = user;
   this.nethost = nethost;
   MessageDuplex.call(this, function(message){
     if(!this._ready) console.log('not ready');
-    console.log(JSON.stringify(message).length);
-    console.log(JSON.stringify(message));
     this.channel.send(JSON.stringify(message));
   }.bind(this));
   this.pconn = new RTCPeerConnection(nethost.config, {
@@ -22,7 +23,7 @@ function NetworkInstance(nethost, user){
     ],
   });
   this.pconn.onicecandidate = this.iceCB.bind(this);
-}
+};
 
 NetworkInstance.prototype = Object.create(MessageDuplex.prototype);
 NetworkInstance.prototype.constructor = NetworkInstance;
@@ -41,7 +42,7 @@ NetworkInstance.prototype.offer = function(){
   var pconn = this.pconn;
   var _this = this;
   return Promise().resolve(function(){
-    return _this.registerChannel(pconn.createDataChannel('sendDataChannel', _this.nethost.sconfig));
+    return registerChannel.call(_this, pconn.createDataChannel('sendDataChannel', _this.nethost.sconfig));
   }).then(function(){
     return new Promise(pconn.createOffer);
   }).then(function(desc){
@@ -52,28 +53,21 @@ NetworkInstance.prototype.offer = function(){
   });
 };
 
-NetworkInstance.prototype.registerChannel = function(channel){
+registerChannel = function(channel){
   var _this = this;
   this.channel = channel;
-  this.channel.onmessage = function(event){
-    var message;
+  channel.onmessage = function(event){
     try{
-      message = JSON.parse(event.data);
+      _this._handleMessage(JSON.parse(event.data));
     }catch(e){
       console.error(e);
       event.target.close();
       return;
     }
-
-    _this.handleMessage(message, event.target);
   };
 
-  this.channel.onopen = function(){
-    _this.ready();
-    _this.emit('open', _this);
-  };
-
-  this.channel.onclose = this.stop.bind(this);
+  channel.onopen = this.ready.bind(this);
+  channel.onclose = this.destroy.bind(this);
 };
 
 /**
@@ -86,7 +80,7 @@ NetworkInstance.prototype.accept = function(message){
   var _this = this;
   var pconn = this.pconn;
   pconn.ondatachannel = function(event){
-    _this.registerChannel(event.channel);
+    registerChannel.call(_this, event.channel);
   };
 
   return new Promise(pconn.setRemoteDescription.bind(

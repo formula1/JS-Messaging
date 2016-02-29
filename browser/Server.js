@@ -1,69 +1,47 @@
 'use strict';
 
 var MessageDuplex = require('../shared/Messenger/MessageDuplex');
+var WebSocket = require('websocket').w3cwebsocket;
 var url = require('url');
-var Server;
+var Server, ensureSocket;
 
-module.exports = Server = function(uri, socket){
+module.exports = Server = function(socket){
   var _this = this;
-  var docuri = url.parse(window.location.href);
-  if(!uri){
-    uri = '';
+  try{
+    socket = ensureSocket(socket);
+  }catch(exception){
+    console.error(exception);
+    throw exception;
   }
 
-  if(typeof uri === 'object'){
-    uri = uri.format(uri); //for error checking
-  }
+  MessageDuplex.call(this, function(message){
+    _this.socket.send(JSON.stringify(message));
+  });
 
-  if(typeof uri === 'string'){
-    this.url = url.parse(uri);
-    if(!this.url.host) this.url.host = docuri.host;
-    if(!this.url.port) this.url.port = docuri.port;
-    if(!this.url.pathname) this.url.pathname = docuri.pathname;
-    if(!this.url.pass) this.url.pass = docuri.pass;
-    this.url.protocol = 'ws:';
-  }else{
-    throw new Error('Url can only be a string or object');
-  }
+  this.pause();
 
-  if(!socket){
+  socket.onopen = this.ready.bind(this);
+  socket.onmessage = function(message){
     try{
-      console.log(url.format(this.url));
-      this.socket = new WebSocket(url.format(this.url));
-    }catch(exception){
-      console.error(exception);
-      return;
-    }
-  }else{
-    this.socket = socket;
-  }
-
-  this.socket.onopen = this.ready.bind(this);
-  this.socket.onmessage = function(message){
-    try{
-      _this.handleMessage(JSON.parse(message.data));
+      _this._handleMessage(JSON.parse(message.data));
     }catch(e){
       _this.emit('error', e);
     }
   };
 
-  this.socket.addEventListener('close', this.stop.bind(this));
-  this.socket.addEventListener('error', this.emit.bind(this, 'error'));
+  socket.addEventListener('close', this.destroy.bind(this));
+  socket.addEventListener('error', this.emit.bind(this, 'error'));
 
-  MessageDuplex.call(this, function(message){
-    _this.socket.send(JSON.stringify(message));
-  });
+  this.socket = socket;
+
+  this.on('destroy', socket.close.bind(socket));
 };
 
 Server.prototype = Object.create(MessageDuplex.prototype);
 Server.prototype.constructor = Server;
 
-Server.prototype.close = function(){
-  this.socket.close();
-};
-
 Server.prototype.export = function(){
-  this.stop();
+  this.pause();
   var socket = this.socket;
   socket.onopen = void 0;
   socket.onmessage = void 0;
@@ -75,4 +53,15 @@ Server.import = function(uri, socket){
   return new Server(uri, socket);
 };
 
-module.exports = Server;
+ensureSocket = function(uri_or_socket){
+  if(uri_or_socket instanceof WebSocket){
+    return uri_or_socket;
+  }
+
+  var uri = uri_or_socket;
+  if(typeof uri === 'string') uri = url.parse(uri);
+  if(typeof uri === 'object') uri = url.format(uri);
+  else throw new Error('Cannot handle this argument');
+
+  return new WebSocket(uri);
+};
