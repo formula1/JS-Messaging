@@ -1,52 +1,95 @@
-# Abstract Types Provided
+# Distributed Messenger Utility
 
-- Messenger
-  - Must overwrite its write calls and notify it that it has a new message
-  - Subclasses
-    - Proxy Messenger - Simply passes on its data to another
-    - Recoverable Messenger - If it disconnects, will store messages and attempt to reconnect
-    - Distributed Messenger - Uses not one but multiple individuals as possibly the same peer
-- Manager
-  - Must provide it with a Messenger class and notify it when there is a possible Messenger available
-  - Subclasses
-    - Proxy Manager
-    - Worker Manager - Recieves whatever another manager gives it.
-    - Permitted Manager - Requires a enabling manager to allow it to recieve or create clients
-    - Enabling Manager - Provides a Permitted Manager with clients they can see and request
-- Enabler
-  - A Manager type that facilitates Messengers knowing about eachother
+This is a duplex stream implemented inorder to support multiple formats of communication.
 
-# Features I'd like to ensure exist
-- Machines can change IP and still effectively communicate with one another over UDP
-  - This involves maintaining a Pong/Pong with a unique Identifier
-- Machines can go offline then come back online as the same individual
-  - This involves maintaining a queue when 'not ready'
+1. Able to emit events and listen for events
+2. Able to make requests and respond to requests
+3. Able to Open, listen, write to, and end streams
 
-# Implementations Intended to be Provided
+## What is this for?
+Often times when Using a Webworker, Child Process or other distributed situations
+there will be some sort of need for communication whether its requestion/responding
+or writing events. Instead of reimplementing the wheel or having to learn a particular
+api each environment this provides a clean interface.
 
-- Child to Parent
-  - Child creates connecton - Websocket (Client/Server)
-  - Parent creates connection - ChildProcess, WebWorkers
-- Peer to Peer
-  - Requires a Parent to connect - WebRTC (CLient to Client)
-  - Requires Knowledge of the Peer Existing (usually a parent or dev) - TCP / UDP (Server to Server)
-  - Easily Listable Peer - IFrame, SharedWorker, node-auxillary (Process to Process)
+## Why Use?
+- Implementation only needs a IO Duplex Stream
+- Simple Request System allowing for the user to initialize many different
+- Sophisticated and Clean Routing System
+- Coverage is at 100
+- Uses TypeScript
+- **Works With** - Though you might need a [json encoder/decoder](https://github.com/dominictarr/JSONStream)
+  - websocket Stream - https://www.npmjs.com/package/websocket-stream
+  - childprocess stream - https://www.npmjs.com/package/duplex-child-process
+  - webworker Stream - https://www.npmjs.com/package/workerstream
+  - webrtc Stream - https://www.npmjs.com/package/rtc-stream
 
-# Managers Required
-- Scanner
-  - Server Scanner - Given a Subnet Mask and IP + Port will attempt to scan the IP for at least one possible peer.
-  - Process Scanner
-    - Server - If the server writes things to files, so long as the files are in the same centralized area. No problem
-    - Client - I'll have to look more into this
-- Child to Parent
-  - Client Listener - Websocket listening
-  - Process Factory - Child Process / WebWorker creation
-- Peer to Peer
-  - WebRTC Facilitator - Implemented Serverside
-  - WebRTC Factory - Implemented Clientside as a means to create one. Without a connection to the server it is impossible to connect to other peers. As a result, there needs to be a common area to discover
-  - Remote Peer Listener - Allows other peers to connect to you or discover you.
-  - Server Process Listener
-    - This eats up the stdin or a predictable filepath to watch for potential messages posted to it.
-  - Client Process listener
-    - Shared Worker implementation. This needs to manage specific requests and send it to the correct clients
-    - Techinically this is 'udp' in that there is no Connection established and maintained
+## Competitors
+- http://www.jsonrpc.org/specification
+-
+
+## Roadmap
+- Become Heavily Involved with [protobuf](https://www.npmjs.com/package/protobufjs)
+-
+
+# Usage
+
+### Construct and Use
+```javascript
+var MessageDuplex = require("message-duplex");
+var messageduplex = new MessageDuplex();
+
+myOtherStream.pipe(messageduplex).pipe(myOtherStream)
+```
+
+
+### Listen For Messages
+```javascript
+messageduplex.use("/path", function(){
+  return new Promise(function(){
+    // in order to delay execution of future paths
+    // can be done in any listener
+  })
+})
+
+messageduplex.onTrigger("/path", function(data, responder){
+  responder.capture(); // inorder to prevent future paths from recieving the event
+})
+
+messageduplex.onRequest("/path", function(data, responder){
+  responder.resolve(data); // inorder to prevent future paths from recieving the event
+  responder.reject(error); // loudly reject the request
+  responder.abort(); // to silently ignore this request
+})
+
+var route = messageduplex.onStream("/path", function(data, responder){
+  responder.reject(); // to loudly reject the stream
+  responder.abort(); // to silently ignore this stream
+  responder.on("data", function(){
+    // responder is a stream that can read and write
+    responder.write("echo");
+  });
+});
+
+messageduplex.removeRoute(route);
+// Removing a route is simple and clean
+```
+
+### Create Messages
+
+```javascript
+messageduplex.trigger("/path", {data: "here"})
+messageduplex.request("/path", {data: "here"}).then(
+  function(resolvedResponse){  },
+  function(rejectedResponse){  }
+)
+
+var stream = messageduplex.stream("/path", {initalData: "here"});
+
+stream.on("data", function(streamData){  })
+stream.on("error", function(streamError){  })
+stream.on("finish", function(){  });
+
+stream.write("future data");
+stream.end("finish Message");
+```

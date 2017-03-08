@@ -1,9 +1,27 @@
 {
   "preset": "airbnb",
-  "disallowSpaceAfterKeywords": ["if", "else", "function", "while", "for"],
-  "requireSpaceAfterKeywords" : ["return"],
+  "validateQuoteMarks": "\"",
+  "disallowSpaceAfterKeywords": ["if", "function", "while", "for"],
+  "requireSpaceAfterKeywords" : ["else", "return"],
   "requireSpaceBeforeBlockStatements": false,
   "disallowSpaceBeforeBlockStatements": true,
+
+  "requireSpaceBetweenArguments": true,
+  "disallowSpaceBetweenArguments": false,
+
+  "requireSpaceAfterComma": true,
+  "disallowSpaceAfterComma": false,
+
+  "requireTrailingComma": false,
+  "disallowTrailingComma": false,
+
+  "disallowSpaceAfterObjectKeys": true,
+  "requireSpaceAfterObjectKeys": false,
+
+  "requireSpaceBeforeBinaryOperators": false,
+  "requireSpaceAfterBinaryOperators": false,
+
+  "requirePaddingNewLinesAfterBlocks": false,
   "disallowMultipleVarDecl": false,
   "requireCamelCaseOrUpperCaseIdentifiers": false,
   "requireSpacesInAnonymousFunctionExpression": false,
