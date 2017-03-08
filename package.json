@@ -7,7 +7,7 @@
     "type" : "git",
     "url" : "https://github.com/npm/npm.git"
   },
-  "author": "formula1",
+  "author": "formula1 <samtobia@gmail.com> (http://samtobia.com/)",
   "main": "dist/node.js",
   "typings": "src/index.ts",
   "browser": {
