@@ -1,0 +1,6 @@
+/test
+/src
+/.*.*
+hidden
+/tslint.json
+/tsconfig.json

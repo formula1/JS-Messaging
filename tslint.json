@@ -1,0 +1,15 @@
+{
+  "extends": "tslint:recommended",
+  "rules": {
+    "object-literal-key-quotes": false,
+    "max-line-length": false,
+    "object-literal-shorthand": false,
+    "only-arrow-functions": false,
+    "no-unused-variable": true,
+    "quotemark": [true, "double"],
+    "array-type": [true, "generic"],
+    "max-classes-per-file": false,
+    "ordered-imports": false,
+    "object-literal-sort-keys": false
+  }
+}

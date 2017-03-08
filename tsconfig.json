@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "lib": ["es6"],
+    "moduleResolution" : "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noEmitHelpers": true,
+    "importHelpers": true,
+    "noEmitOnError": true,
+    "outDir": "dist/es5",
+    "rootDir": "src"
+  },
+  "filesGlob": [
+    "src/index.ts",
+    "node_modules/@types/**/*.ts"
+  ],
+  "typeRoots": [
+    "./node_modules/@types"
+  ]
+}

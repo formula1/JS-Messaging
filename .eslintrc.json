@@ -1,0 +1,23 @@
+{
+  "env": {},
+  "plugins": [],
+  "extends": [
+    "eslint:recommended"
+  ],
+  "globals": {
+    "require": true,
+    "Promise": true,
+    "Set": true,
+    "setTimeout": true,
+    "__dirname": true,
+    "window": true,
+    "global": true,
+    "self": true,
+    "module": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 5,
+    "sourceType": "module",
+    "impliedStrict": true
+  }
+}
