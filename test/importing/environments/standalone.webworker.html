@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+<body>
+  <script type="text/javascript" src="fn-to-bloburl.js" ></script>
+  <script type="text/javascript">
+    window.start = function(){
+      return new Promise(function(res, rej){
+        var worker = new Worker(fnToBlobUrl(function(location){
+          var scriptUrl = location + "/dist/standalone.js";
+          self.importScripts(scriptUrl);
+          var duplex = new MessageDuplex();
+          self.postMessage("finished");
+        }, [window.location.protocol + "//" + window.location.host]));
+        worker.onerror = rej;
+        worker.onmessage = function(event){
+          clearTimeout(to);
+          if(event.data !== "finished"){
+            rej("improper data:", "finished", event.data);
+          }
+          res();
+        };
+        to = setTimeout(function(){
+          rej("timedout");
+        }, 1000);
+      });
+    };
+  </script>
+  <h1 id="footer">Footer</h1>
+</body>
+</html>

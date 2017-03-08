@@ -1,0 +1,31 @@
+version: "3"
+services:
+  fileserver:
+    image: kyma/docker-nginx
+    command: nginx
+    volumes:
+      - "../../:/var/www"
+    ports:
+      - "8080:80"
+  hub:
+    image: selenium/hub
+    ports:
+      - "4444:4444"
+    depends_on:
+      - fileserver
+  firefox:
+    image: selenium/node-firefox
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+    depends_on:
+      - fileserver
+      - hub
+  chrome:
+    image: selenium/node-chrome
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+    depends_on:
+      - fileserver
+      - hub

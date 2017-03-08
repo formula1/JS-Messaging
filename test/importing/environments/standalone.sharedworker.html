@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+<body>
+  <script type="text/javascript" src="fn-to-bloburl.js" ></script>
+  <script type="text/javascript">
+    window.start = function(){
+      return new Promise(function(res, rej){
+        var worker = new SharedWorker(fnToBlobUrl(function(location){
+          var scriptUrl = location + "/dist/standalone.js";
+          self.importScripts(scriptUrl);
+          self.onconnect = function(e){
+            var port = e.ports[0];
+            var duplex = new MessageDuplex();
+            port.postMessage("finished");
+
+            // Required when using addEventListener.
+            // Otherwise called implicitly by onmessage setter.
+            port.start();
+          };
+        }, [window.location.protocol + "//" + window.location.host]));
+        worker.onerror = rej;
+        worker.port.onmessage = function(event){
+          clearTimeout(to);
+          if(event.data !== "finished"){
+            rej("improper data:", "finished", event.data);
+          }
+          res();
+        };
+        to = setTimeout(function(){
+          rej("timedout");
+        }, 1000);
+        worker.port.start();
+      });
+    };
+  </script>
+  <h1 id="footer">Footer</h1>
+</body>
+</html>

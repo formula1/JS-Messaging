@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+<body>
+  <script type="text/javascript" src="/dist/standalone.js"></script>
+  <script type="text/javascript">
+    window.start = function(){
+      return Promise.resolve().then(function(){
+        var duplex = new MessageDuplex();
+      });
+    };
+  </script>
+  <h1 id="footer">Footer</h1>
+</body>
+</html>
