@@ -44,6 +44,7 @@
     "exclude": [
       "src/**/*",
       "test/**/*",
+      "docs/**/*",
       "dist/standalone.js",
       "dist/standalone.min.js"
     ]
