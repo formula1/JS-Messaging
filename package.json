@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Typescript Validated Messenging Interface",
   "license": "JSON License <./license.txt>",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/npm/npm.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/formula1/JS-Messaging.git"
   },
   "author": "formula1 <samtobia@gmail.com> (http://samtobia.com/)",
   "main": "dist/node.js",
