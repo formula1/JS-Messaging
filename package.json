@@ -66,9 +66,7 @@
     "nyc": "^10.1.2",
     "rimraf": "^2.6.1",
     "selenium-webdriver": "^3.1.0",
-    "split": "^1.0.0",
     "tap": "^10.2.2",
-    "ts-node": "^2.1.0",
     "tslint": "^4.5.1",
     "typescript": "^2.2.1",
     "uglify-js": "^2.8.4"
