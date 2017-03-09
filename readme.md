@@ -1,5 +1,6 @@
 # Distributed Messenger Utility
 [![Coverage Status](https://coveralls.io/repos/github/formula1/JS-Messaging/badge.svg?branch=master)](https://coveralls.io/github/formula1/JS-Messaging?branch=master) [![Build Status](https://travis-ci.org/formula1/JS-Messaging.svg?branch=master)](https://travis-ci.org/formula1/JS-Messaging)
+
 This is a duplex stream implemented inorder to support multiple formats of communication.
 
 1. Able to emit events and listen for events
