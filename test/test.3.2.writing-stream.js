@@ -43,7 +43,9 @@ tap.test("stream", function(tt){
           }, 200);
         });
       }).then(function(results){
-        var [values, errors, didEnd] = results;
+        var values = results[0];
+        var errors = results[1];
+        var didEnd = results[2];
         tr.equal(errors.length, 0, "recieved no errors");
         tr.notOk(didEnd, "stream has not ended");
         tr.equal(values.length, expectedRess.length, "recieved expected number of responses");
@@ -70,7 +72,9 @@ tap.test("stream", function(tt){
           });
         });
       }).then(function(results){
-        var [values, errors, didEnd] = results;
+        var values = results[0];
+        var errors = results[1];
+        var didEnd = results[2];
         tr.equal(errors.length, 0, "recieved no errors");
         tr.notOk(didEnd, "stream has not ended");
         tr.equal(values.length, expectedRess.length, "recieved expected number of responses");
@@ -98,7 +102,9 @@ tap.test("stream", function(tt){
           });
         });
       }).then(function(results){
-        var [values, errors, didEnd] = results;
+        var values = results[0];
+        var errors = results[1];
+        var didEnd = results[2];
         tr.equal(values.length, 0, "no values should have been emitted");
         tr.notOk(didEnd, "stream has not ended");
         tr.equal(errors.length, expectedRess.length, "recieved expected number of errors");
@@ -123,7 +129,9 @@ tap.test("stream", function(tt){
           });
         });
       }).then(function(results){
-        var [values, errors, didEnd] = results;
+        var values = results[0];
+        var errors = results[1];
+        var didEnd = results[2];
         tr.ok(didEnd, "the stream ended");
         tr.equal(values.length, 0, "no values were sent");
         tr.equal(errors.length, 0, "no values were sent");
@@ -148,7 +156,9 @@ tap.test("stream", function(tt){
             error: false
           }), "will not route a message its not expecting");
         }).then(function(results){
-          var [values, errors, didEnd] = results;
+          var values = results[0];
+          var errors = results[1];
+          var didEnd = results[2];
           tr.equal(values.length, 0, "no data should have been emitted");
           tr.equal(errors.length, 0, "no errors should have been emitted");
           tr.notOk(didEnd, "end should not have been emitted");
@@ -160,7 +170,9 @@ tap.test("stream", function(tt){
               error: false
             }), "will route a message it is expecting");
           }).then(function(results){
-            var [values, errors, didEnd] = results;
+            var values = results[0];
+            var errors = results[1];
+            var didEnd = results[2];
             tr.equal(values.length, 1, "one value should have been emitted");
             tr.equal(values[0], expectedRes, "no data should have been emitted");
             tr.equal(errors.length, 0, "no errors should have been emitted");
@@ -185,7 +197,9 @@ tap.test("stream", function(tt){
             error: true
           }), "will not route a message its not expecting");
         }).then(function(results){
-          var [values, errors, didEnd] = results;
+          var values = results[0];
+          var errors = results[1];
+          var didEnd = results[2];
           tr.equal(values.length, 0, "no data should have been emitted");
           tr.equal(errors.length, 0, "no errors should have been emitted");
           tr.notOk(didEnd, "end should not have been emitted");
@@ -197,7 +211,9 @@ tap.test("stream", function(tt){
               error: true
             }), "will route a message it is expecting");
           }).then(function(results){
-            var [values, errors, didEnd] = results;
+            var values = results[0];
+            var errors = results[1];
+            var didEnd = results[2];
             tr.equal(values.length, 0, "no data should have been emitted");
             tr.equal(errors.length, 1, "one error should have been emitted");
             tr.equal(errors[0], expectedRes, "no errors should have been emitted");
@@ -221,7 +237,9 @@ tap.test("stream", function(tt){
             error: false
           }), "will not route a message its not expecting");
         }).then(function(results){
-          var [values, errors, didEnd] = results;
+          var values = results[0];
+          var errors = results[1];
+          var didEnd = results[2];
           tr.equal(values.length, 0, "no data should have been emitted");
           tr.equal(errors.length, 0, "no errors should have been emitted");
           tr.notOk(didEnd, "end should not have been emitted");
@@ -233,7 +251,9 @@ tap.test("stream", function(tt){
               error: false
             }), "will route a message it is expecting");
           }).then(function(results){
-            var [values, errors, didEnd] = results;
+            var values = results[0];
+            var errors = results[1];
+            var didEnd = results[2];
             tr.equal(values.length, 0, "no data should have been emitted");
             tr.equal(errors.length, 0, "no errors should have been emitted");
             tr.ok(didEnd, "end should have been emitted");
