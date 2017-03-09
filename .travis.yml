@@ -9,3 +9,7 @@ node_js:
   - "4"
 before_script:
   - npm run build:src
+after_failure:
+  - coveralls
+after_success:
+  - coveralls
