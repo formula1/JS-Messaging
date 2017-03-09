@@ -4,18 +4,26 @@
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
-  <script type="text/javascript" src="fn-to-bloburl.js" ></script>
+  <script type="text/javascript" src="helpers/fn-to-bloburl.js" ></script>
   <script type="text/javascript">
     window.start = function(){
       return new Promise(function(res, rej){
-        var worker = new Worker(fnToBlobUrl(function(location){
-          var scriptUrl = location + "/dist/standalone.js";
+        var worker = new SharedWorker(fnToBlobUrl(function(location){
+          var scriptUrl = location + "/test/importing/hidden.js";
           self.importScripts(scriptUrl);
-          var duplex = new MessageDuplex();
-          self.postMessage("finished");
+          self.onconnect = function(e){
+            var fn = require("start-fn");
+            fn();
+            var port = e.ports[0];
+            port.postMessage("finished");
+
+            // Required when using addEventListener.
+            // Otherwise called implicitly by onmessage setter.
+            port.start();
+          };
         }, [window.location.protocol + "//" + window.location.host]));
         worker.onerror = rej;
-        worker.onmessage = function(event){
+        worker.port.onmessage = function(event){
           clearTimeout(to);
           if(event.data !== "finished"){
             rej("improper data:", "finished", event.data);
@@ -25,6 +33,7 @@
         to = setTimeout(function(){
           rej("timedout");
         }, 1000);
+        worker.port.start();
       });
     };
   </script>

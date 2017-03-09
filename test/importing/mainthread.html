@@ -4,12 +4,11 @@
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
-  <script type="text/javascript" src="/dist/standalone.js"></script>
+  <script type="text/javascript" src="/test/importing/hidden.js"></script>
   <script type="text/javascript">
     window.start = function(){
-      return Promise.resolve().then(function(){
-        var duplex = new MessageDuplex();
-      });
+      var fn = require("start-fn");
+      return Promise.resolve().then(fn);
     };
   </script>
   <h1 id="footer">Footer</h1>
