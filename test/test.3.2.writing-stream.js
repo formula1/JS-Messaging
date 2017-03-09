@@ -43,7 +43,9 @@ tap.test("stream", function(tt){
           }, 200);
         });
       }).then(function(results){
-        var [values, errors, didEnd] = results;
+        var values = results[0];
+        var errors = results[1];
+        var didEnd = results[2];
         tr.equal(errors.length, 0, "recieved no errors");
         tr.notOk(didEnd, "stream has not ended");
         tr.equal(values.length, expectedRess.length, "recieved expected number of responses");
@@ -70,7 +72,9 @@ tap.test("stream", function(tt){
           });
         });
       }).then(function(results){
-        var [values, errors, didEnd] = results;
+        var values = results[0];
+        var errors = results[1];
+        var didEnd = results[2];
         tr.equal(errors.length, 0, "recieved no errors");
         tr.notOk(didEnd, "stream has not ended");
         tr.equal(values.length, expectedRess.length, "recieved expected number of responses");
@@ -98,7 +102,9 @@ tap.test("stream", function(tt){
           });
         });
       }).then(function(results){
-        var [values, errors, didEnd] = results;
+        var values = results[0];
+        var errors = results[1];
+        var didEnd = results[2];
         tr.equal(values.length, 0, "no values should have been emitted");
         tr.notOk(didEnd, "stream has not ended");
         tr.equal(errors.length, expectedRess.length, "recieved expected number of errors");
@@ -123,7 +129,9 @@ tap.test("stream", function(tt){
           });
         });
       }).then(function(results){
-        var [values, errors, didEnd] = results;
+        var values = results[0];
+        var errors = results[1];
+        var didEnd = results[2];
         tr.ok(didEnd, "the stream ended");
         tr.equal(values.length, 0, "no values were sent");
         tr.equal(errors.length, 0, "no values were sent");
@@ -137,7 +145,9 @@ tap.test("stream", function(tt){
       var badRes = {};
       var expectedRes = {};
       return initializeDuplexStreamAndMessage(tr).then(function(dsm){
-        var [routeDup, stream, message] = dsm;
+        var routeDup = dsm[0];
+        var stream = dsm[1];
+        var message = dsm[2];
         var newID = message.id + "more to be unique";
         tr.notEqual(message.id, newID, "the response id is not the same as the message");
         return collectStreamDataFromRun(stream, function(){
@@ -148,7 +158,9 @@ tap.test("stream", function(tt){
             error: false
           }), "will not route a message its not expecting");
         }).then(function(results){
-          var [values, errors, didEnd] = results;
+          var values = results[0];
+          var errors = results[1];
+          var didEnd = results[2];
           tr.equal(values.length, 0, "no data should have been emitted");
           tr.equal(errors.length, 0, "no errors should have been emitted");
           tr.notOk(didEnd, "end should not have been emitted");
@@ -160,7 +172,9 @@ tap.test("stream", function(tt){
               error: false
             }), "will route a message it is expecting");
           }).then(function(results){
-            var [values, errors, didEnd] = results;
+            var values = results[0];
+            var errors = results[1];
+            var didEnd = results[2];
             tr.equal(values.length, 1, "one value should have been emitted");
             tr.equal(values[0], expectedRes, "no data should have been emitted");
             tr.equal(errors.length, 0, "no errors should have been emitted");
@@ -174,7 +188,9 @@ tap.test("stream", function(tt){
       var badRes = {};
       var expectedRes = {};
       return initializeDuplexStreamAndMessage(tr).then(function(dsm){
-        var [routeDup, stream, message] = dsm;
+        var routeDup = dsm[0];
+        var stream = dsm[1];
+        var message = dsm[2];
         var newID = message.id + "more to be unique";
         tr.notEqual(message.id, newID, "the response id is not the same as the message");
         return collectStreamDataFromRun(stream, function(){
@@ -185,7 +201,9 @@ tap.test("stream", function(tt){
             error: true
           }), "will not route a message its not expecting");
         }).then(function(results){
-          var [values, errors, didEnd] = results;
+          var values = results[0];
+          var errors = results[1];
+          var didEnd = results[2];
           tr.equal(values.length, 0, "no data should have been emitted");
           tr.equal(errors.length, 0, "no errors should have been emitted");
           tr.notOk(didEnd, "end should not have been emitted");
@@ -197,7 +215,9 @@ tap.test("stream", function(tt){
               error: true
             }), "will route a message it is expecting");
           }).then(function(results){
-            var [values, errors, didEnd] = results;
+            var values = results[0];
+            var errors = results[1];
+            var didEnd = results[2];
             tr.equal(values.length, 0, "no data should have been emitted");
             tr.equal(errors.length, 1, "one error should have been emitted");
             tr.equal(errors[0], expectedRes, "no errors should have been emitted");
@@ -210,7 +230,9 @@ tap.test("stream", function(tt){
     tv.test("will not end an invalid id", function(tr){
       var badRes = {};
       return initializeDuplexStreamAndMessage(tr).then(function(dsm){
-        var [routeDup, stream, message] = dsm;
+        var routeDup = dsm[0];
+        var stream = dsm[1];
+        var message = dsm[2];
         var newID = message.id + "more to be unique";
         tr.notEqual(message.id, newID, "the response id is not the same as the message");
         return collectStreamDataFromRun(stream, function(){
@@ -221,7 +243,9 @@ tap.test("stream", function(tt){
             error: false
           }), "will not route a message its not expecting");
         }).then(function(results){
-          var [values, errors, didEnd] = results;
+          var values = results[0];
+          var errors = results[1];
+          var didEnd = results[2];
           tr.equal(values.length, 0, "no data should have been emitted");
           tr.equal(errors.length, 0, "no errors should have been emitted");
           tr.notOk(didEnd, "end should not have been emitted");
@@ -233,7 +257,9 @@ tap.test("stream", function(tt){
               error: false
             }), "will route a message it is expecting");
           }).then(function(results){
-            var [values, errors, didEnd] = results;
+            var values = results[0];
+            var errors = results[1];
+            var didEnd = results[2];
             tr.equal(values.length, 0, "no data should have been emitted");
             tr.equal(errors.length, 0, "no errors should have been emitted");
             tr.ok(didEnd, "end should have been emitted");
@@ -248,13 +274,20 @@ tap.test("stream", function(tt){
     tv.test("can write data", function(tr){
       var expectedMessages = [{}, {}, {}];
       return initializeDuplexStreamAndMessage(tr).then(function(dsm){
-        var [routeDup, stream, message] = dsm;
+        var routeDup = dsm[0];
+        var stream = dsm[1];
+        var message = dsm[2];
         return collectEndDataFromRun(routeDup, stream, function(){
           expectedMessages.forEach(function(data){
             stream.write(data);
           });
         }).then(function(results){
-          var [dupValues, dupErrors, strValues, strErrors, finishes, ends] = results;
+          var dupValues = results[0];
+          var dupErrors = results[1];
+          var strValues = results[2];
+          var strErrors = results[3];
+          var finishes = results[4];
+          var ends = results[5];
           tr.equal(
             dupValues.length, expectedMessages.length,
             "duplex should have sent out messages"
@@ -278,7 +311,9 @@ tap.test("stream", function(tt){
     tv.test("cannot write data during remote ends", function(tr){
       var expectedMessages = [{}, {}, {}];
       return initializeDuplexStreamAndMessage(tr).then(function(dsm){
-        var [routeDup, stream, message] = dsm;
+        var routeDup = dsm[0];
+        var stream = dsm[1];
+        var message = dsm[2];
         return collectEndDataFromRun(routeDup, stream, function(){
           routeDup.returnMessage({
             id: message.id,
@@ -290,7 +325,12 @@ tap.test("stream", function(tt){
             stream.write(data);
           });
         }).then(function(results){
-          var [dupValues, dupErrors, strValues, strErrors, finishes, ends] = results;
+          var dupValues = results[0];
+          var dupErrors = results[1];
+          var strValues = results[2];
+          var strErrors = results[3];
+          var finishes = results[4];
+          var ends = results[5];
           tr.equal(dupValues.length, 0, "duplex should have sent no messages");
           tr.equal(dupErrors.length, 0, "duplex should have no errors");
           tr.equal(strValues.length, 0, "stream should have pushed no values");
@@ -307,11 +347,18 @@ tap.test("stream", function(tt){
   tt.test("ending", function(tv){
     tv.test("locally ending will emit end and finish events", function(tr){
       return initializeDuplexStreamAndMessage(tr).then(function(dsm){
-        var [dup, stream, message] = dsm;
+        var dup = dsm[0];
+        var stream = dsm[1];
+        var message = dsm[2];
         return collectEndDataFromRun(dup, stream, function(){
           stream.end();
         }).then(function(results){
-          var [dupValues, dupErrors, strValues, strErrors, finishes, ends] = results;
+          var dupValues = results[0];
+          var dupErrors = results[1];
+          var strValues = results[2];
+          var strErrors = results[3];
+          var finishes = results[4];
+          var ends = results[5];
           tr.equal(dupValues.length, 1, "duplex should have sent out a message");
           tr.equal(
             dupValues[0].method, METHODS.STREAM_END,
@@ -329,11 +376,18 @@ tap.test("stream", function(tt){
     });
     tv.test("locally aborting will emit end and finish events", function(tr){
       return initializeDuplexStreamAndMessage(tr).then(function(dsm){
-        var [dup, stream, message] = dsm;
+        var dup = dsm[0];
+        var stream = dsm[1];
+        var message = dsm[2];
         return collectEndDataFromRun(dup, stream, function(){
           stream.abort();
         }).then(function(results){
-          var [dupValues, dupErrors, strValues, strErrors, finishes, ends] = results;
+          var dupValues = results[0];
+          var dupErrors = results[1];
+          var strValues = results[2];
+          var strErrors = results[3];
+          var finishes = results[4];
+          var ends = results[5];
           tr.equal(dupValues.length, 1, "duplex should have sent out a message");
           tr.equal(dupValues[0].method, METHODS.ABORT, "message should have a stream abort method");
           tr.equal(dupValues[0].id, message.id, "message id should be the same as the original");
@@ -348,7 +402,9 @@ tap.test("stream", function(tt){
     });
     tv.test("remotely ending will emit end and finish events", function(tr){
       return initializeDuplexStreamAndMessage(tr).then(function(dsm){
-        var [dup, stream, message] = dsm;
+        var dup = dsm[0];
+        var stream = dsm[1];
+        var message = dsm[2];
         return collectEndDataFromRun(dup, stream, function(){
           dup.returnMessage({
             id: message.id,
@@ -358,7 +414,12 @@ tap.test("stream", function(tt){
           });
         });
       }).then(function(results){
-        var [dupValues, dupErrors, strValues, strErrors, finishes, ends] = results;
+        var dupValues = results[0];
+        var dupErrors = results[1];
+        var strValues = results[2];
+        var strErrors = results[3];
+        var finishes = results[4];
+        var ends = results[5];
         tr.equal(dupValues.length, 0, "duplex should not have sent out a message");
         tr.equal(dupErrors.length, 0, "duplex should have no errors");
         tr.equal(strValues.length, 0, "stream should have pushed no values");
@@ -370,7 +431,12 @@ tap.test("stream", function(tt){
     });
     tv.test("after ending will not reemmit", function(tvv){
       var standardCheck = function(results, tr){
-        var [dupValues, dupErrors, strValues, strErrors, finishes, ends] = results;
+        var dupValues = results[0];
+        var dupErrors = results[1];
+        var strValues = results[2];
+        var strErrors = results[3];
+        var finishes = results[4];
+        var ends = results[5];
         tr.equal(dupValues.length, 0, "duplex should not have sent out a message");
         tr.equal(dupErrors.length, 0, "duplex should have no errors");
         tr.equal(strValues.length, 0, "stream should have pushed no values");
@@ -379,7 +445,12 @@ tap.test("stream", function(tt){
         tr.equal(ends, 1, "stream should have emitted end once");
       };
       var emptyCheck = function(results, tr){
-        var [dupValues, dupErrors, strValues, strErrors, finishes, ends] = results;
+        var dupValues = results[0];
+        var dupErrors = results[1];
+        var strValues = results[2];
+        var strErrors = results[3];
+        var finishes = results[4];
+        var ends = results[5];
         tr.equal(dupValues.length, 0, "duplex should not have sent out a message");
         tr.equal(dupErrors.length, 0, "duplex should have no errors");
         tr.equal(strValues.length, 0, "stream should have pushed no values");
@@ -410,7 +481,9 @@ tap.test("stream", function(tt){
       }].forEach(function(toRun){
         tvv.test(toRun.name, function(tr){
           return initializeDuplexStreamAndMessage(tr).then(function(dsm){
-            var [dup, stream, message] = dsm;
+            var dup = dsm[0];
+            var stream = dsm[1];
+            var message = dsm[2];
             return collectEndDataFromRun(dup, stream, function(){
               dup.returnMessage({
                 id: message.id,
