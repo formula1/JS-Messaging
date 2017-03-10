@@ -44,7 +44,9 @@
     "test:import:imports": "babel-node --presets es2015 test/importing/test.2.imports",
     "test:import:globals": "babel-node --presets es2015 test/importing/test.3.globals",
     "test:import:clean": "docker-compose -f ./test/importing/docker-compose.yml down",
-    "docs": "npm-run-all clean:docs build:docs"
+    "docs": "npm-run-all clean:docs build:docs",
+    "report": "npm-run-all report:*",
+    "report:cover": "nyc report --reporter=text-lcov | coveralls"
   },
   "nyc": {
     "exclude": [
@@ -61,6 +63,7 @@
     "babel-preset-es2015": "^6.22.0",
     "babelify": "^7.3.0",
     "browserify": "^14.1.0",
+    "coveralls": "^2.12.0",
     "eslint": "^3.17.1",
     "jscs": "^3.0.7",
     "npm-run-all": "^4.0.2",

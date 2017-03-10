@@ -8,6 +8,6 @@ node_js:
 before_script:
   - npm run build:src
 after_failure:
-  - coveralls
+  - npm run report
 after_success:
-  - coveralls
+  - npm run report
