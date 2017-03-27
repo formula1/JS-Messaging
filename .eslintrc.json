@@ -6,7 +6,6 @@
   ],
   "globals": {
     "require": true,
-    "Promise": true,
     "Set": true,
     "setTimeout": true,
     "clearTimeout": true,
