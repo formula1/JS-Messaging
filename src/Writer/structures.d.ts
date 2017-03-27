@@ -1,3 +1,4 @@
+import { Promise } from "es6-promise";
 import { Duplex } from "stream";
 import { IMessage, IRawSend } from "../structures.shared";
 

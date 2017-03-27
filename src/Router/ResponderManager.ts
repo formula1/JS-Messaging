@@ -1,3 +1,4 @@
+import { Promise } from "es6-promise";
 import StreamResponder from "./router-messages/stream";
 
 import {

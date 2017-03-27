@@ -1,6 +1,7 @@
 import { IMessage } from "../structures.shared";
 import { LISTENABLE_METHODS, METHODS } from "../constants";
 import { isFunction } from "../util";
+import { Promise } from "es6-promise";
 
 import {
   createInvalidMethodError,

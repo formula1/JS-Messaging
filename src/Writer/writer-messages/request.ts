@@ -1,3 +1,4 @@
+import { Promise } from "es6-promise";
 import { IAbortableInitiator, IMessage } from "../../structures.shared";
 import { Writable } from "stream";
 
