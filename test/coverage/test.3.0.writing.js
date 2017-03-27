@@ -1,16 +1,17 @@
+var Promise = require("es6-promise");
 var tap = require("tape");
 var Duplex = require("../../dist/node");
 var util = require("../util");
 var delay = util.delay;
 var METHODS = Duplex.METHODS;
 
+var routeTypes = [METHODS.TRIGGER, METHODS.REQUEST, METHODS.STREAM_START];
+var routeTypeToMethod = {};
+routeTypeToMethod[METHODS.TRIGGER] = "trigger";
+routeTypeToMethod[METHODS.REQUEST] = "request";
+routeTypeToMethod[METHODS.STREAM_START] = "stream";
+
 tap.test("routing", function(t){
-  var routeTypes = [METHODS.TRIGGER, METHODS.REQUEST, METHODS.STREAM_START];
-  var routeTypeToMethod = {
-    [METHODS.TRIGGER]: "trigger",
-    [METHODS.REQUEST]: "request",
-    [METHODS.STREAM_START]: "stream",
-  };
   routeTypes.forEach(function(routeType){
     var method = routeTypeToMethod[routeType];
     t.test(routeType, function(tt){
@@ -34,6 +35,8 @@ tap.test("routing", function(t){
           tl.equal(message.data, expectedData, "data is as expected");
           tl.equal(message.method, routeType, "method is as expected");
           tl.end();
+        }).catch(function(err){
+          tl.fail(err.toString());
         });
       });
       tt.end();

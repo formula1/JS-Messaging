@@ -59,6 +59,8 @@ tap.test("requests", function(tt){
             tr.ok(messageState.error, "error exists on messageState");
             tr.equal(recievedValue, expectRecValue, "recieved value is correct");
             tr.end();
+          }).catch(function(err){
+            tr.fail(err.toString());
           });
         });
         tv.end();

@@ -1,19 +1,19 @@
+var Promise = require("es6-promise");
 var tap = require("tape");
 var Duplex = require("../../dist/node");
 var util = require("../util");
 var delay = util.delay;
 var METHODS = Duplex.METHODS;
 
-var routeTypeToMethod = {
-  [METHODS.TRIGGER]: "onTrigger",
-  [METHODS.REQUEST]: "onRequest",
-  [METHODS.STREAM_START]: "onStream",
-};
+var routeTypeToMethod = {};
+routeTypeToMethod[METHODS.TRIGGER] = "onTrigger";
+routeTypeToMethod[METHODS.REQUEST] = "onRequest";
+routeTypeToMethod[METHODS.STREAM_START] = "onStream";
+
 var abortTypes = [METHODS.REQUEST, METHODS.STREAM_START];
-var writeMethods = {
-  [METHODS.REQUEST]: "resolve",
-  [METHODS.STREAM_START]: "write"
-};
+var writeMethods = {};
+writeMethods[METHODS.REQUEST] = "resolve";
+writeMethods[METHODS.STREAM_START] = "write";
 
 tap.test("aborting", function(td){
   abortTypes.forEach(function(routeType){
@@ -60,6 +60,8 @@ tap.test("aborting", function(td){
           }),
         ]).then(function(){
           tr.end();
+        }).catch(function(err){
+          tr.fail(err.toString());
         });
       });
       tt.test("can create two abortables with the same id different times", function(tr){
@@ -245,6 +247,8 @@ tap.test("aborting", function(td){
           tr.equal(recievedValue, expectRecValue, "recieved value is correct");
           tr.equal(respValues.length, 0, "no response value was handled");
           tr.end();
+        }).catch(function(err){
+          tr.fail(err.toString());
         });
       });
       tt.test("writing after remote abort produces errors", function(tr){
@@ -286,6 +290,8 @@ tap.test("aborting", function(td){
           tr.equal(recievedValue, expectRecValue, "recieved value is correct");
           tr.equal(respValues.length, 0, "no response value was handled");
           tr.end();
+        }).catch(function(err){
+          tr.fail(err.toString());
         });
       });
       tt.end();

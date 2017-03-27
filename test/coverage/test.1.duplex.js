@@ -2,6 +2,7 @@ var tap = require("tape");
 var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
 var util = require("../util");
+var Promise = require("es6-promise");
 var delay = util.delay;
 var writeToStream = util.writeToStream;
 
@@ -53,15 +54,19 @@ tap.test("Duplex", function(t){
     var toPush = "example";
     duplex.push(toPush);
     return new Promise(function(res, rej){
-      listeners.concat(notOkListeners).map(function(key){
-        duplex.on(key, function(){
-          if(successful.has(key)){
-            return rej("duplicate event " + key);
-          }
-          successful.add(key);
+      try{
+        listeners.concat(notOkListeners).map(function(key){
+          duplex.on(key, function(){
+            if(successful.has(key)){
+              return rej("duplicate event " + key);
+            }
+            successful.add(key);
+          });
         });
-      });
-      duplex.destroy();
+        duplex.destroy();
+      }catch(e){
+        rej(e);
+      }
       res();
     }).then(function(){
       listeners.forEach(function(key){

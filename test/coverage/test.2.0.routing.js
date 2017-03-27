@@ -1,14 +1,15 @@
 var tap = require("tape");
 var Duplex = require("../../dist/node");
+var Promise = require("es6-promise");
 var METHODS = Duplex.METHODS;
 
 tap.test("routing", function(t){
   var routeTypes = [METHODS.TRIGGER, METHODS.REQUEST, METHODS.STREAM_START];
-  var routeTypeToMethod = {
-    [METHODS.TRIGGER]: "onTrigger",
-    [METHODS.REQUEST]: "onRequest",
-    [METHODS.STREAM_START]: "onStream",
-  };
+  var routeTypeToMethod = {};
+
+  routeTypeToMethod[METHODS.TRIGGER] = "onTrigger";
+  routeTypeToMethod[METHODS.REQUEST] = "onRequest";
+  routeTypeToMethod[METHODS.STREAM_START] = "onStream";
   t.test("cannot run invalid methods", function(tr){
     var routeDup = new Duplex();
     return routeDup.routeMessage({
@@ -17,7 +18,7 @@ tap.test("routing", function(t){
       path: "/meh",
       data: true
     }).then(function(){
-      tr.threw("did not throw on invalid method");
+      tr.fail("did not throw on invalid method");
     }, function(e){
       tr.pass("threw an error on invalid method");
       tr.ok(/^Invalid method /.test(e.message), "error has correct message");

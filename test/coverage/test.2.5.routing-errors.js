@@ -1,3 +1,4 @@
+var Promise = require("es6-promise");
 var tap = require("tape");
 var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
@@ -8,20 +9,19 @@ var delay = util.delay;
 
 var routeTypes = [METHODS.TRIGGER, METHODS.REQUEST, METHODS.STREAM_START];
 var abortableTypes = [METHODS.REQUEST, METHODS.STREAM_START];
-var routeTypeToMethod = {
-  [METHODS.TRIGGER]: "onTrigger",
-  [METHODS.REQUEST]: "onRequest",
-  [METHODS.STREAM_START]: "onStream",
-};
-var routeTypeToWriteMethod = {
-  [METHODS.REQUEST]: "resolve",
-  [METHODS.STREAM_START]: "write",
-};
-var routeTypeToCreateMethod = {
-  [METHODS.TRIGGER]: "trigger",
-  [METHODS.REQUEST]: "request",
-  [METHODS.STREAM_START]: "stream",
-};
+var routeTypeToMethod = {};
+routeTypeToMethod[METHODS.TRIGGER] = "onTrigger";
+routeTypeToMethod[METHODS.REQUEST] = "onRequest";
+routeTypeToMethod[METHODS.STREAM_START] = "onStream";
+
+var routeTypeToWriteMethod = {};
+routeTypeToWriteMethod[METHODS.REQUEST] = "resolve";
+routeTypeToWriteMethod[METHODS.STREAM_START] = "write";
+
+var routeTypeToCreateMethod = {};
+routeTypeToCreateMethod[METHODS.TRIGGER] = "trigger";
+routeTypeToCreateMethod[METHODS.REQUEST] = "request";
+routeTypeToCreateMethod[METHODS.STREAM_START] = "stream";
 
 tap.test("errors", function(tv){
   tv.test("destroying will prevent responses without error", function(td){
@@ -58,6 +58,9 @@ tap.test("errors", function(tv){
           routeDup.destroy(),
         ]).then(function(){
           tr.end();
+        }).catch(function(err){
+          tr.fail(err.toString());
+          tr.end();
         });
       });
     });
@@ -84,6 +87,9 @@ tap.test("errors", function(tv){
           return delay(200);
         }).then(function(){
           tr.equal(sentValues.length, 0, "no data sent");
+          tr.end();
+        }).catch(function(err){
+          tr.fail(err.toString());
           tr.end();
         });
       });
@@ -121,6 +127,9 @@ tap.test("errors", function(tv){
           tr.equal(err.error, error, "error recieved is expected");
           tr.equal(err.message, sentMessage, "error recieved is expected");
           tr.equal(respValues.length, 0, "no response should have been handled");
+          tr.end();
+        }).catch(function(err){
+          tr.fail(err.toString());
           tr.end();
         });
       });
@@ -164,6 +173,60 @@ tap.test("errors", function(tv){
           tr.ok(respValues.length > 0, "a response should have been sent");
           tr.equal(respValues[0].data, error, "error value is correct");
           tr.ok(respValues[0].error, "response is an error");
+          tr.end();
+        }).catch(function(err){
+          tr.fail(err.toString());
+          tr.end();
+        });
+      });
+    });
+    td.end();
+  });
+  tv.test("routing a message with an interfering id causes errors", function(td){
+    abortableTypes.forEach(function(routeType){
+      var method = routeTypeToMethod[routeType];
+      td.test(function(tr){
+        var routeDup = new Duplex();
+        var error = {};
+        var respValues = [];
+        var expectedRec = {};
+        var recievedValue = false;
+        routeDup.on("data", function(msg){
+          respValues.push(msg);
+        });
+        routeDup[method]("/hang-forever", function(val){
+          return new Promise(function(){
+
+          }).then(function(){
+            recievedValue = val;
+          });
+        });
+        var id = Date.now().toString();
+        return Promise.race([
+          routeDup.routeMessage({
+            id: id,
+            method: routeType,
+            path: "/hang-forever",
+            data: expectedRec,
+          }),
+          routeDup.routeMessage({
+            id: id,
+            method: routeType,
+            path: "/hang-forever",
+            data: expectedRec,
+          }),
+        ]).then(function(){
+          throw new Error("should have thrown an error");
+        }, function(err){
+          tr.pass("an error occured");
+          tr.equal(recievedValue, false, "Value is never recieved");
+          tr.notEqual(err, error, "route error was not the thrown error");
+          return defaultErrorHandler(err);
+        }).then(function(){
+          tr.equal(respValues.length, 0, "no response should have been handled");
+          tr.end();
+        }).catch(function(err){
+          tr.fail(err.toString());
           tr.end();
         });
       });
@@ -214,6 +277,9 @@ tap.test("errors", function(tv){
       }).then(function(){
         tr.equal(respValues.length, 0, "no response should have been handled");
         tr.end();
+      }).catch(function(err){
+        tr.fail(err.toString());
+        tr.end();
       });
     });
     [
@@ -252,27 +318,6 @@ tap.test("errors", function(tv){
           });
         },
         types: routeTypes,
-      },
-      {
-        name: "interfering ids",
-        fn: function(routeDup){
-          var id = Date.now().toString();
-          return Promise.race([
-            routeDup.routeMessage({
-              id: id,
-              method: METHODS.STREAM_START,
-              path: "/hang-forever",
-              data: null,
-            }),
-            routeDup.routeMessage({
-              id: id,
-              method: METHODS.STREAM_START,
-              path: "/hang-forever",
-              data: null,
-            }),
-          ]);
-        },
-        types: abortableTypes,
       },
       {
         name: "invalid method",
@@ -317,6 +362,9 @@ tap.test("errors", function(tv){
               return defaultErrorHandler(err);
             }).then(function(){
               tr.equal(respValues.length, 0, "no response should have been handled");
+              tr.end();
+            }).catch(function(err){
+              tr.fail(err.toString());
               tr.end();
             });
           });
@@ -368,6 +416,9 @@ tap.test("errors", function(tv){
       }
     ).then(function(){
       tr.end();
+    }).catch(function(err){
+      tr.fail(err.toString());
+      tr.end();
     });
   });
   tv.test("Cannot send stream end to request", function(tr){
@@ -411,6 +462,9 @@ tap.test("errors", function(tv){
         tr.pass("an error was thrown");
       }
     ).then(function(){
+      tr.end();
+    }).catch(function(err){
+      tr.fail(err.toString());
       tr.end();
     });
   });

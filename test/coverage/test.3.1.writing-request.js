@@ -1,4 +1,6 @@
+var Promise = require("es6-promise");
 var tap = require("tape");
+var isPromise = require("ispromise");
 var Duplex = require("../../dist/node");
 var util = require("../util");
 var delay = util.delay;
@@ -22,7 +24,7 @@ tap.test("request", function(tt){
         throw "timed out";
       })
     ]).then(function(message){
-      tr.ok(p instanceof Promise, "returens a promise");
+      tr.ok(isPromise(p), "returns a promise");
       tr.ok(message.id, "message has an id");
       tr.equal(message.path, expectedPath, "path is as expected");
       tr.equal(message.data, expectedRec, "data is as expected");
@@ -38,6 +40,9 @@ tap.test("request", function(tt){
         tr.equal(value, expectedRes);
         tr.end();
       });
+    }).catch(function(err){
+      tr.fail(err.toString());
+      tr.end();
     });
   });
   tt.test("async reject", function(tr){
@@ -57,7 +62,7 @@ tap.test("request", function(tt){
         throw "timed out";
       })
     ]).then(function(message){
-      tr.ok(p instanceof Promise, "returens a promise");
+      tr.ok(isPromise(p), "returns a promise");
       tr.ok(message.id, "message has an id");
       tr.equal(message.path, expectedPath, "path is as expected");
       tr.equal(message.data, expectedRec, "data is as expected");
@@ -75,6 +80,9 @@ tap.test("request", function(tt){
         tr.equal(value, expectedRes);
         tr.end();
       });
+    }).catch(function(err){
+      tr.fail(err.toString());
+      tr.end();
     });
   });
 
@@ -95,7 +103,7 @@ tap.test("request", function(tt){
         throw "timed out";
       })
     ]).then(function(message){
-      tr.ok(p instanceof Promise, "returens a promise");
+      tr.ok(isPromise(p), "returns a promise");
       tr.ok(message.id, "message has an id");
       tr.equal(message.path, expectedPath, "path is as expected");
       tr.equal(message.data, expectedRec, "data is as expected");
@@ -132,6 +140,9 @@ tap.test("request", function(tt){
         }),
         delay(200).then(function(){ throw "timed out"; }),
       ]);
+    }).catch(function(err){
+      tr.fail(err.toString());
+      tr.end();
     });
   });
   tt.end();

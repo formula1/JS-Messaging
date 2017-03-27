@@ -1,6 +1,7 @@
 var tap = require("tape");
 var Duplex = require("../../dist/node");
 var util = require("../util");
+var Promise = require("es6-promise");
 var delay = util.delay;
 var writeToStream = util.writeToStream;
 var METHODS = Duplex.METHODS;
@@ -59,6 +60,8 @@ tap.test("streams", function(tt){
             tr.ok(messageState.error, "error exists on messageState");
             tr.equal(recievedValue, expectRecValue, "recieved value is correct");
             tr.end();
+          }).catch(function(err){
+            tr.fail(err.toString());
           });
         });
         tv.end();

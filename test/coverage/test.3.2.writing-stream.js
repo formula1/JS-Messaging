@@ -1,3 +1,4 @@
+var Promise = require("es6-promise");
 var tap = require("tape");
 var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
@@ -79,6 +80,9 @@ tap.test("stream", function(tt){
         expectedRess.forEach(function(expectedRes, i){
           tr.equal(values[i], expectedRes, "recieved the correct responses in the right order");
         });
+        tr.end();
+      }).catch(function(err){
+        tr.fail(err.toString());
         tr.end();
       });
     });
