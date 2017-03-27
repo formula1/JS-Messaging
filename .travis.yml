@@ -1,13 +1,17 @@
 sudo: required
 services:
-  - docker
+- docker
 language: node_js
 node_js:
-  - "7"
-  - "6"
+- '7'
+- '6'
 before_script:
-  - npm run build:src
+- npm run build:src
 after_failure:
-  - npm run report
+- npm run report
 after_success:
-  - npm run report
+- npm run report
+env:
+  global:
+  - secure: uTaYUxOxnZfDAhQN8mGE22HPyew3JNgNSKeU4ZFHSf/91pHmRzD42TT5w1vNZdnFVBfstSrxxYQ4rgovo13zqUtBEIYWMCZ2kOfGjZJjCvKy65W/yz5LckAVXFtZfgQBJeqTNWBk0BjUqLaKJHRc+/JcRw25j0iA2Z8UxePQLLe9+9JImEZ8Ev+7E50jecuxIO3/cFOxHKamD9VCNdF6mnNRettjer4srlscpf49V/oIq9ZNvogiKsXzi3y4lIVw/GVvHydeVbkdTN2n8Tj7x+KVVjFMQbnD7h5nMKHsW+topkK3yQy8O13eu2kWYtbjyuo3LGk6pFM/MbRerzWB4tG5+fxRoDQ7tVvwgsYNP4QnlAwxFlx23qQcDDj2Jn7jz3BXDeYFYWJ6iMBvvS08p0f2tSpH++Nu93Ivg8gcNFHi5v/zddzFt6BhnWciujzRE1VbV1aO3zlB7IlX004yzDwGyafbFTsAhmdCmWfHEF5N86Cg6V1ZHp+Nf30IyFXQJ+KFYWdTF7lilfWIkekmbH0PhHPr348Zi+SCHH0gttEsgIMeOBoC8xiugemnEjlbRk+CrhCBSUw5j6NDm5RmpNnr6dkIUz3DZwhxtt/Jkk8ymGbbnheTBzH4OTOSHkjPOb5xrsARqUxFBlOIEr3ZpQZYCc46ZJrFWDcQmrDOULg=
+  - secure: SlKPFaO8qSJlJfKEW3vtCrMXu6e5WVxlOl1jgseUcBywPregId+6BgkLZWNSOW2nAu94iUz3kFJ6zek8fTfe8Tsw/dXsRVlGJcuMX3uV3IW4VhZgzEPxsQ8rMmBIQfUlfnqF1N6E4cNyFSR8KQgQSBfFUnowse8Veu52jbSQrSNUO2LQ/ANb/uAQH9JtgoSnrsUPetDId6Sgw+9NenjD9TY4XOxdWqRQ2sU26eLHQBRr2MLEF2mgIQSclsibjR1LqK1ADAJvgxIsFCfafYS2z5AekMmJNCQwme/almfzI7nFQ2gReUkwfLadW91EKeHuIv5HMRv2XWsd9QY8VFyUuFA2rZ9wQH3uxKsDF/90+yc0tPVmzzwna5CCDpYQPZSqa3Z/kPKoIdHt4ek0A5qj71yQtovpfPuGbs1U3l8dJOHAC9gg0KQtFaIBLMBvbKKntOlBBFairHUdfc3UXbPMl32ZlnT15oEC3OKNxkFb6tb43seNA5ywo0+JS6ELQtxoaKCakTWKhF2j7pAW3+R7QGl0BwL/4boJRcylGY73azUCBBQxF4PnYqUin78lX9AeHHcUYbAwTJzwdtn84aOp4rZ3bl0RhHGw8neT6KYMSrI492fPQBlOkMPoFp5IgIRTayTJAx1Ea2Yun4oM5avh7JHMPlp/3s1OgIDfAa4jsic=

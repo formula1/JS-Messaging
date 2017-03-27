@@ -1,0 +1,45 @@
+ui: tape
+browser_retries: 2
+browser_output_timeout: 15000
+browsers:
+  - name: chrome
+    version: latest
+    platform: Linux
+  - name: chrome
+    version: latest
+    platform: "Windows 10"
+  - name: chrome
+    version: latest
+    platform: "Mac 10.12"
+  - name: firefox
+    version: latest
+    platform: Linux
+  - name: firefox
+    version: latest
+    platform: Windows 10
+  - name: firefox
+    version: latest
+    platform: "Mac 10.12"
+  - name: iphone
+    version: latest
+  - name: ipad
+    version: latest
+  - name: android
+    version: latest
+  # - name: opera
+  #   version: latest
+  #   platform: Linux
+  # - name: opera
+  #   version: latest
+  #   platform: Windows 10
+  # - name: opera
+  #   version: latest
+  #   platform: "Mac 10.12"
+  # - name: safari
+  #   version: latest
+  # - name: ie
+  #   version: "11"
+  #   platform: Windows 10
+  - name: microsoftedge
+    version: latest
+    platform: "Windows 10"
