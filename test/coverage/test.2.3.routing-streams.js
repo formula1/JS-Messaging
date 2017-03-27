@@ -1,6 +1,7 @@
 var tap = require("tape");
 var Duplex = require("../../dist/node");
-
+var util = require("../util");
+var writeToStream = util.writeToStream;
 var METHODS = Duplex.METHODS;
 
 tap.test("streams", function(tt){
@@ -142,9 +143,9 @@ tap.test("streams", function(tt){
         values.push(val);
       });
       routeDup.onStream("/meh", function(data, responder){
-        testData.forEach(function(data){
-          responder.write(data);
-        });
+        return Promise.all(testData.map(function(data){
+          return writeToStream(responder, data);
+        }));
       });
       return routeDup.routeMessage({
         id: Date.now().toString(),
@@ -176,13 +177,13 @@ tap.test("streams", function(tt){
         values.push(val);
       });
       routeDup.onStream("/meh", function(data, responder){
-        responder.write(testData[0]);
+        return writeToStream(responder, testData[0]);
       });
       routeDup.onStream("/meh", function(data, responder){
         responder.end(testData[1]);
       });
       routeDup.onStream("/meh", function(data, responder){
-        responder.write(testData[2]);
+        return writeToStream(responder, testData[2]);
       });
       return routeDup.routeMessage({
         id: Date.now().toString(),

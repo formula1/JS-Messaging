@@ -1,6 +1,8 @@
 var tap = require("tape");
 var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
+var util = require("../util");
+var writeToStream = util.writeToStream;
 
 tap.test("Duplex", function(t){
   t.test("can construct", { bail: true }, function(tt){
@@ -103,7 +105,7 @@ tap.test("Duplex", function(t){
         recievedValue = data;
         responder.resolve();
       });
-      return Promise.resolve(routeDup.write({
+      return Promise.resolve(writeToStream(routeDup, {
         id: Date.now().toString(),
         method: METHODS.REQUEST,
         path: "/meh",
@@ -121,7 +123,7 @@ tap.test("Duplex", function(t){
       var respondedValue = false;
       routeDup.on("data", function(message){
         recievedValue = message.data;
-        routeDup.write({
+        writeToStream(routeDup, {
           id: message.id,
           method: METHODS.REQUEST,
           path: "/meh",
@@ -160,13 +162,13 @@ tap.test("Duplex", function(t){
         responder.resolve(expectedRes[1]);
       });
       return Promise.all([
-        routeDup.write({
+        writeToStream(routeDup, {
           id: Date.now().toString(),
           method: METHODS.REQUEST,
           path: "/error",
           data: expectedRec[0],
         }),
-        routeDup.write({
+        writeToStream(routeDup, {
           id: Date.now().toString(),
           method: METHODS.REQUEST,
           path: "/not-error",

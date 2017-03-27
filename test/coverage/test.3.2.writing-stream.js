@@ -1,6 +1,8 @@
 var tap = require("tape");
 var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
+var util = require("../util");
+var writeToStream = util.writeToStream;
 
 tap.test("stream", function(tt){
   tt.test("recieving", function(tv){
@@ -275,9 +277,9 @@ tap.test("stream", function(tt){
         var stream = dsm[1];
         var message = dsm[2];
         return collectEndDataFromRun(routeDup, stream, function(){
-          expectedMessages.forEach(function(data){
-            stream.write(data);
-          });
+          return Promise.all(expectedMessages.map(function(data){
+            return writeToStream(stream, data);
+          }));
         }).then(function(results){
           var dupValues = results[0];
           var dupErrors = results[1];
@@ -318,9 +320,9 @@ tap.test("stream", function(tt){
             data: null,
             error: false
           });
-          expectedMessages.forEach(function(data){
-            stream.write(data);
-          });
+          return Promise.all(expectedMessages.map(function(data){
+            return writeToStream(stream, data);
+          }));
         }).then(function(results){
           var dupValues = results[0];
           var dupErrors = results[1];
