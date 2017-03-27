@@ -1,8 +1,5 @@
-var tap = require("tap");
-var path = require("path");
-var __root = path.resolve(__dirname, "../..");
-var mainLocation = require(path.join(__root + "/package.json")).main;
-var Duplex = require(path.join(__root, mainLocation));
+var tap = require("tape");
+var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
 
 tap.test("routing", function(t){
@@ -28,7 +25,6 @@ tap.test("routing", function(t){
     });
   });
   routeTypes.forEach(function(routeType){
-    var routeDup;
     var method = routeTypeToMethod[routeType];
     t.test(routeType, function(tre){
       [
@@ -37,12 +33,9 @@ tap.test("routing", function(t){
       ].forEach(function(testInfo){
         tre.test(testInfo.name, function(tt){
           var path = testInfo.path;
-          tt.beforeEach(function(){
-            return Promise.resolve().then(function(){
-              routeDup = new Duplex();
-            });
-          });
           tt.test("can listen", function(tl){
+            var routeDup = new Duplex();
+
             routeDup[method](path, function(){
             });
             tl.pass("can listen to trigger event");
@@ -50,6 +43,7 @@ tap.test("routing", function(t){
           });
           tt.test("listener triggers for correct path", function(tr){
             var didTrigger = false;
+            var routeDup = new Duplex();
             routeDup[method](path, function(){
               didTrigger = true;
             });
@@ -66,6 +60,7 @@ tap.test("routing", function(t){
           });
           tt.test("can remove route", function(tr){
             var didTrigger = false;
+            var routeDup = new Duplex();
             var route = routeDup[method](path, function(){
               didTrigger = true;
             });
@@ -84,6 +79,7 @@ tap.test("routing", function(t){
           });
           tt.test("wont remove route if non-existant", function(tr){
             var didTrigger = false;
+            var routeDup = new Duplex();
             var route = routeDup[method](path, function(){
               didTrigger = true;
             });
@@ -102,11 +98,6 @@ tap.test("routing", function(t){
             });
           });
           tt.test("other methods do not run listener", function(tr){
-            tr.beforeEach(function(){
-              return Promise.resolve().then(function(){
-                routeDup = new Duplex();
-              });
-            });
             Promise.all(routeTypes.map(function(oType){
               if(oType === routeType){
                 return;
@@ -115,6 +106,7 @@ tap.test("routing", function(t){
 
                 var oMethod = routeTypeToMethod[oType];
                 var badPathTrigger = false;
+                var routeDup = new Duplex();
                 routeDup[method](path, function(){
                   badPathTrigger = true;
                 });
@@ -141,6 +133,7 @@ tap.test("routing", function(t){
           tt.test("wrong path is skipped", function(tr){
             var didTrigger = false;
             var badPathTrigger = false;
+            var routeDup = new Duplex();
             routeDup[method](path, function(){
               didTrigger = true;
             });
@@ -162,6 +155,7 @@ tap.test("routing", function(t){
           tt.test("value is correct", function(tr){
             var expectedValue = {};
             var recievedValue = false;
+            var routeDup = new Duplex();
             routeDup[method](path, function(data){
               recievedValue = data;
             });
@@ -180,6 +174,7 @@ tap.test("routing", function(t){
             var expectedValue = {};
             var recievedValue = false;
             var dupValue = false;
+            var routeDup = new Duplex();
             routeDup[method](path, function(data){
               recievedValue = data;
             });
@@ -206,4 +201,4 @@ tap.test("routing", function(t){
   });
   t.end();
 });
-tap.end();
+tap.end && tap.end();

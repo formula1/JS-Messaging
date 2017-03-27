@@ -1,8 +1,5 @@
-var tap = require("tap");
-var path = require("path");
-var __root = path.resolve(__dirname, "../..");
-var mainLocation = require(path.join(__root + "/package.json")).main;
-var Duplex = require(path.join(__root, mainLocation));
+var tap = require("tape");
+var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
 var defaultErrorHandler = Duplex.defaultErrorHandler;
 
@@ -24,13 +21,7 @@ var routeTypeToCreateMethod = {
 };
 
 tap.test("errors", function(tv){
-  var routeDup;
   tv.test("destroying will prevent responses without error", function(td){
-    td.beforeEach(function(){
-      return Promise.resolve().then(function(){
-        routeDup = new Duplex();
-      });
-    });
     abortableTypes.forEach(function(routeType){
       var method = routeTypeToMethod[routeType];
       var writeMethod = routeTypeToWriteMethod[routeType];
@@ -40,6 +31,7 @@ tap.test("errors", function(tv){
         var expectedResp = {};
         var respValues = [];
         var id = Date.now().toString();
+        var routeDup = new Duplex();
         routeDup.on("data", function(msg){
           respValues.push(msg);
         });
@@ -71,16 +63,12 @@ tap.test("errors", function(tv){
     td.end();
   });
   tv.test("destroying will prevent writes with error", function(td){
-    td.beforeEach(function(){
-      return Promise.resolve().then(function(){
-        routeDup = new Duplex();
-      });
-    });
     routeTypes.forEach(function(routeType){
       var createMethod = routeTypeToCreateMethod[routeType];
       td.test(routeType, function(tr){
         var expectedValue = {};
         var sentValues = [];
+        var routeDup = new Duplex();
         routeDup.on("data", function(msg){
           sentValues.push(msg);
         });
@@ -105,11 +93,6 @@ tap.test("errors", function(tv){
   });
 
   tv.test("can catch errors thrown by router", function(td){
-    td.beforeEach(function(){
-      return Promise.resolve().then(function(){
-        routeDup = new Duplex();
-      });
-    });
     routeTypes.forEach(function(routeType){
       var method = routeTypeToMethod[routeType];
       td.test(routeType, function(tr){
@@ -124,6 +107,7 @@ tap.test("errors", function(tv){
           path: "/meh",
           data: expectedRec,
         };
+        var routeDup = new Duplex();
         routeDup.on("data", function(msg){
           respValues.push(msg);
         });
@@ -145,11 +129,6 @@ tap.test("errors", function(tv){
     td.end();
   });
   tv.test("caught errors thrown by router produce error responses", function(td){
-    td.beforeEach(function(){
-      return Promise.resolve().then(function(){
-        routeDup = new Duplex();
-      });
-    });
     abortableTypes.forEach(function(routeType){
       var method = routeTypeToMethod[routeType];
       td.test(routeType, function(tr){
@@ -164,6 +143,7 @@ tap.test("errors", function(tv){
           path: "/meh",
           data: expectedRec,
         };
+        var routeDup = new Duplex();
         routeDup.on("data", function(msg){
           respValues.push(msg);
         });
@@ -212,6 +192,7 @@ tap.test("errors", function(tv){
       var respValues = [];
       var expectedRec = {};
       var recievedValue = false;
+      var routeDup = new Duplex();
       routeDup.on("data", function(msg){
         respValues.push(msg);
       });
@@ -239,7 +220,7 @@ tap.test("errors", function(tv){
     [
       {
         name: "missing id for abort",
-        fn: function(expectedRec){
+        fn: function(routeDup, expectedRec){
           return routeDup.routeMessage({
             id: Date.now().toString(),
             method: METHODS.ABORT,
@@ -251,7 +232,7 @@ tap.test("errors", function(tv){
       },
       {
         name: "non existant id for stream part",
-        fn: function(expectedRec){
+        fn: function(routeDup, expectedRec){
           return routeDup.routeMessage({
             id: Date.now().toString(),
             method: METHODS.STREAM_PART,
@@ -263,7 +244,7 @@ tap.test("errors", function(tv){
       },
       {
         name: "non existant id for stream end",
-        fn: function(){
+        fn: function(routeDup){
           return routeDup.routeMessage({
             id: Date.now().toString(),
             method: METHODS.STREAM_END,
@@ -275,7 +256,7 @@ tap.test("errors", function(tv){
       },
       {
         name: "interfering ids",
-        fn: function(){
+        fn: function(routeDup){
           var id = Date.now().toString();
           return Promise.race([
             routeDup.routeMessage({
@@ -296,7 +277,7 @@ tap.test("errors", function(tv){
       },
       {
         name: "invalid method",
-        fn: function(){
+        fn: function(routeDup){
           return routeDup.routeMessage({
             id: Date.now().toString(),
             method: "DEFINIELY NOT A METHOD" + METHODS.STREAM_START,
@@ -310,12 +291,8 @@ tap.test("errors", function(tv){
       tvv.test(testData.name, function(td){
         testData.types.forEach(function(routeType){
           var method = routeTypeToMethod[routeType];
-          td.beforeEach(function(){
-            return Promise.resolve().then(function(){
-              routeDup = new Duplex();
-            });
-          });
           td.test(function(tr){
+            var routeDup = new Duplex();
             var error = {};
             var respValues = [];
             var expectedRec = {};
@@ -332,7 +309,7 @@ tap.test("errors", function(tv){
 
               });
             });
-            return testData.fn(expectedRec).then(function(){
+            return testData.fn(routeDup, expectedRec).then(function(){
               throw new Error("should have thrown an error");
             }, function(err){
               tr.pass("an error occured");
@@ -440,4 +417,4 @@ tap.test("errors", function(tv){
   });
   tv.end();
 });
-tap.end();
+tap.end && tap.end();

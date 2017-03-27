@@ -1,8 +1,5 @@
-var tap = require("tap");
-var path = require("path");
-var __root = path.resolve(__dirname, "../..");
-var mainLocation = require(path.join(__root + "/package.json")).main;
-var Duplex = require(path.join(__root, mainLocation));
+var tap = require("tape");
+var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
 
 tap.test("request", function(tt){
@@ -131,4 +128,4 @@ tap.test("request", function(tt){
   });
   tt.end();
 });
-tap.end();
+tap.end && tap.end();

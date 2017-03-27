@@ -1,24 +1,16 @@
-var tap = require("tap");
-var path = require("path");
-var __root = path.resolve(__dirname, "../..");
-var mainLocation = require(path.join(__root + "/package.json")).main;
-var Duplex = require(path.join(__root, mainLocation));
+var tap = require("tape");
+var Duplex = require("../../dist/node");
 
 var METHODS = Duplex.METHODS;
 
 tap.test("events", function(tt){
-  var routeDup;
-  tt.beforeEach(function(){
-    return Promise.resolve().then(function(){
-      routeDup = new Duplex();
-    });
-  });
   tt.test("can capture event", function(tr){
     var expectedValue = {};
     var recievedValue = false;
     var dup1Value = false;
     var dup2Value = false;
     var dup3Value = false;
+    var routeDup = new Duplex();
     routeDup.onTrigger("/meh", function(data, responder){
       recievedValue = data;
       responder.capture();
@@ -49,6 +41,7 @@ tap.test("events", function(tt){
   tt.test("multiple calls produces errors", function(tr){
     var expectRecValue = {};
     var recievedValue = false;
+    var routeDup = new Duplex();
     routeDup.onTrigger("/meh", function(data, responder){
       recievedValue = data;
       responder.capture();
@@ -73,4 +66,4 @@ tap.test("events", function(tt){
   });
   tt.end();
 });
-tap.end();
+tap.end && tap.end();

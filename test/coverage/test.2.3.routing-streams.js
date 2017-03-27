@@ -1,30 +1,17 @@
-var tap = require("tap");
-var path = require("path");
-var __root = path.resolve(__dirname, "../..");
-var mainLocation = require(path.join(__root + "/package.json")).main;
-var Duplex = require(path.join(__root, mainLocation));
+var tap = require("tape");
+var Duplex = require("../../dist/node");
 
 var METHODS = Duplex.METHODS;
 
 tap.test("streams", function(tt){
-  var routeDup;
-  tt.beforeEach(function(){
-    return Promise.resolve().then(function(){
-      routeDup = new Duplex();
-    });
-  });
   tt.test("capture request", function(td){
     ["reject", "capture"].map(function(key){
       return td.test(key, function(tv){
-        tv.beforeEach(function(){
-          return Promise.resolve().then(function(){
-            routeDup = new Duplex();
-          });
-        });
         tv.test("captures event", function(tr){
           var expectedValue = {};
           var recievedValue = false;
           var dup1Value = false;
+          var routeDup = new Duplex();
           routeDup.onStream("/meh", function(data, responder){
             recievedValue = data;
             responder[key]();
@@ -47,6 +34,7 @@ tap.test("streams", function(tt){
         tv.test("multiple calls produces errors", function(tr){
           var expectRecValue = {};
           var recievedValue = false;
+          var routeDup = new Duplex();
           routeDup.onStream("/meh", function(data, responder){
             recievedValue = data;
             responder[key](1);
@@ -79,14 +67,10 @@ tap.test("streams", function(tt){
     td.end();
   });
   tt.test("does not respond", function(tv){
-    tv.beforeEach(function(){
-      return Promise.resolve().then(function(){
-        routeDup = new Duplex();
-      });
-    });
     ["capture"].forEach(function(key){
       tv.test(key, function(tr){
         var values = [];
+        var routeDup = new Duplex();
         routeDup.on("data", function(val){
           values.push(val.error);
         });
@@ -114,15 +98,11 @@ tap.test("streams", function(tt){
     tv.end();
   });
   tt.test("does respond", function(tv){
-    tv.beforeEach(function(){
-      return Promise.resolve().then(function(){
-        routeDup = new Duplex();
-      });
-    });
     ["end", "reject"].forEach(function(key){
       tv.test(key, function(tr){
         var testData = {};
         var values = [];
+        var routeDup = new Duplex();
         routeDup.on("data", function(val){
           values.push(val);
         });
@@ -154,14 +134,10 @@ tap.test("streams", function(tt){
     tv.end();
   });
   tt.test("writing data", function(tv){
-    tv.beforeEach(function(){
-      return Promise.resolve().then(function(){
-        routeDup = new Duplex();
-      });
-    });
     tv.test("can write data multiple times", function(tr){
       var testData = [{}, {}, {}];
       var values = [];
+      var routeDup = new Duplex();
       routeDup.on("data", function(val){
         values.push(val);
       });
@@ -195,6 +171,7 @@ tap.test("streams", function(tt){
     tv.test("can from multiple routes", function(tr){
       var testData = [{}, {}, {}];
       var values = [];
+      var routeDup = new Duplex();
       routeDup.on("data", function(val){
         values.push(val);
       });
@@ -237,15 +214,11 @@ tap.test("streams", function(tt){
     tv.end();
   });
   tt.test("remote commands", function(tv){
-    tv.beforeEach(function(){
-      return Promise.resolve().then(function(){
-        routeDup = new Duplex();
-      });
-    });
     tv.test("can recieve data", function(tr){
       var id = Date.now().toString();
       var testData = [{}, {}, {}];
       var recieved = [];
+      var routeDup = new Duplex();
       routeDup.onStream("/meh", function(initdata, responder){
         responder.on("data", function(data){
           recieved.push(data);
@@ -294,6 +267,7 @@ tap.test("streams", function(tt){
       var id = Date.now().toString();
       var didEnd = false;
       var recData = [];
+      var routeDup = new Duplex();
       routeDup.onStream("/meh", function(initdata, responder){
         responder.on("data", function(item){
           recData.push(item);
@@ -331,4 +305,4 @@ tap.test("streams", function(tt){
   });
   tt.end();
 });
-tap.end();
+tap.end && tap.end();

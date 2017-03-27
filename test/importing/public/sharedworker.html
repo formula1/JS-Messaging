@@ -4,12 +4,12 @@
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body>
-  <script type="text/javascript" src="helpers/fn-to-bloburl.js" ></script>
+  <script type="text/javascript" src="/fn-to-bloburl.js" ></script>
   <script type="text/javascript">
     window.start = function(){
       return new Promise(function(res, rej){
         var worker = new SharedWorker(fnToBlobUrl(function(location){
-          var scriptUrl = location + "/test/importing/hidden.js";
+          var scriptUrl = location + "/hidden.js";
           self.importScripts(scriptUrl);
           self.onconnect = function(e){
             var fn = require("start-fn");

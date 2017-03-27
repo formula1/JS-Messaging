@@ -1,8 +1,5 @@
-var tap = require("tap");
-var path = require("path");
-var __root = path.resolve(__dirname, "../..");
-var mainLocation = require(path.join(__root + "/package.json")).main;
-var Duplex = require(path.join(__root, mainLocation));
+var tap = require("tape");
+var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
 
 var routeTypeToMethod = {
@@ -19,20 +16,15 @@ var writeMethods = {
 tap.test("aborting", function(td){
   abortTypes.forEach(function(routeType){
     td.test(routeType, function(tt){
-      var routeDup;
       var method = routeTypeToMethod[routeType];
       var writeMethod = writeMethods[routeType];
-      tt.beforeEach(function(){
-        return Promise.resolve().then(function(){
-          routeDup = new Duplex();
-        });
-      });
       tt.test("cannot create two abortables with the same id at the same time", function(tr){
         var expectedValue = {};
         var recievedValue = false;
         var expectedResp = {};
         var respValues = [];
         var id = Date.now().toString();
+        var routeDup = new Duplex();
         routeDup.on("data", function(msg){
           respValues.push(msg);
         });
@@ -81,6 +73,7 @@ tap.test("aborting", function(td){
         var expectedResp = {};
         var respValues = [];
         var id = Date.now().toString();
+        var routeDup = new Duplex();
         routeDup.on("data", function(msg){
           respValues.push(msg);
         });
@@ -124,6 +117,7 @@ tap.test("aborting", function(td){
         var expectedValue = {};
         var recievedValue = false;
         var dup1Value = false;
+        var routeDup = new Duplex();
         routeDup[method]("/meh", function(data, responder){
           recievedValue = data;
           responder.abort();
@@ -146,6 +140,7 @@ tap.test("aborting", function(td){
       tt.test("multiple calls does not produce errors", function(tr){
         var expectRecValue = {};
         var recievedValue = false;
+        var routeDup = new Duplex();
         routeDup[method]("/meh", function(data, responder){
           recievedValue = data;
           responder.abort();
@@ -170,6 +165,7 @@ tap.test("aborting", function(td){
       });
       tt.test("abort does not respond", function(tr){
         var values = [];
+        var routeDup = new Duplex();
         routeDup.on("data", function(val){
           values.push(val.error);
         });
@@ -196,6 +192,7 @@ tap.test("aborting", function(td){
       tt.test("can recieve abort", function(tr){
         var id = Date.now().toString();
         var values = [];
+        var routeDup = new Duplex();
         routeDup.on("data", function(val){
           values.push(val);
         });
@@ -240,6 +237,7 @@ tap.test("aborting", function(td){
         var recievedValue = false;
         var writeValue = {};
         var respValues = [];
+        var routeDup = new Duplex();
         routeDup.on("data", function(msg){
           respValues.push(msg);
         });
@@ -272,6 +270,7 @@ tap.test("aborting", function(td){
         var writeValue = {};
         var respValues = [];
         var id = Date.now().toString(32);
+        var routeDup = new Duplex();
         routeDup.on("data", function(msg){
           respValues.push(msg);
         });
@@ -313,4 +312,4 @@ tap.test("aborting", function(td){
   });
   td.end();
 });
-tap.end();
+tap.end && tap.end();

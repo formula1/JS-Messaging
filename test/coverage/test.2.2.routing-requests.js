@@ -1,18 +1,9 @@
-var tap = require("tap");
-var path = require("path");
-var __root = path.resolve(__dirname, "../..");
-var mainLocation = require(path.join(__root + "/package.json")).main;
-var Duplex = require(path.join(__root, mainLocation));
+var tap = require("tape");
+var Duplex = require("../../dist/node");
 
 var METHODS = Duplex.METHODS;
 
 tap.test("requests", function(tt){
-  var routeDup;
-  tt.beforeEach(function(){
-    return Promise.resolve().then(function(){
-      routeDup = new Duplex();
-    });
-  });
   tt.test("capture request", function(td){
     ["resolve", "reject"].map(function(key){
       return td.test(key, function(tv){
@@ -20,6 +11,7 @@ tap.test("requests", function(tt){
           var expectedValue = {};
           var recievedValue = false;
           var dup1Value = false;
+          var routeDup = new Duplex();
           routeDup.onRequest("/meh", function(data, responder){
             recievedValue = data;
             responder[key]();
@@ -42,6 +34,7 @@ tap.test("requests", function(tt){
         tv.test("multiple calls produces errors", function(tr){
           var expectRecValue = {};
           var recievedValue = false;
+          var routeDup = new Duplex();
           routeDup.onRequest("/meh", function(data, responder){
             recievedValue = data;
             responder[key](1);
@@ -85,6 +78,7 @@ tap.test("requests", function(tt){
           var recievedValue = false;
           var expectResValue = {};
           var values = [];
+          var routeDup = new Duplex();
           routeDup.on("data", function(val){
             values.push(val.data);
           });
@@ -113,6 +107,7 @@ tap.test("requests", function(tt){
         });
         tv.test("Error value is correct", function(tr){
           var values = [];
+          var routeDup = new Duplex();
           routeDup.on("data", function(val){
             values.push(val.error);
           });
@@ -144,4 +139,4 @@ tap.test("requests", function(tt){
   });
   tt.end();
 });
-tap.end();
+tap.end && tap.end();

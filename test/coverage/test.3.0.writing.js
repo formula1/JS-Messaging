@@ -1,8 +1,5 @@
-var tap = require("tap");
-var path = require("path");
-var __root = path.resolve(__dirname, "../..");
-var mainLocation = require(path.join(__root + "/package.json")).main;
-var Duplex = require(path.join(__root, mainLocation));
+var tap = require("tape");
+var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
 
 tap.test("routing", function(t){
@@ -13,17 +10,12 @@ tap.test("routing", function(t){
     [METHODS.STREAM_START]: "stream",
   };
   routeTypes.forEach(function(routeType){
-    var routeDup;
     var method = routeTypeToMethod[routeType];
     t.test(routeType, function(tt){
-      tt.beforeEach(function(){
-        return Promise.resolve().then(function(){
-          routeDup = new Duplex();
-        });
-      });
       tt.test("can use", function(tl){
         var expectedPath = "/meh";
         var expectedData = {};
+        var routeDup = new Duplex();
         return new Promise(function(res, rej){
           routeDup.on("data", function(data){
             res(data);
@@ -47,17 +39,12 @@ tap.test("routing", function(t){
     var abortTypes = [METHODS.REQUEST, METHODS.STREAM_START];
     abortTypes.forEach(function(routeType){
       td.test(routeType, function(tt){
-        var routeDup;
         var method = routeTypeToMethod[routeType];
-        tt.beforeEach(function(){
-          return Promise.resolve().then(function(){
-            routeDup = new Duplex();
-          });
-        });
         tt.test("can abort", function(tr){
           var expectedData = {};
           var expectedPath = "/meh";
           var recievedValues = [];
+          var routeDup = new Duplex();
           return new Promise(function(res){
             routeDup.on("data", function(data){
               recievedValues.push(data);
@@ -86,4 +73,4 @@ tap.test("routing", function(t){
   });
   t.end();
 });
-tap.end();
+tap.end && tap.end();

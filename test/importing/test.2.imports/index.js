@@ -1,4 +1,4 @@
-var tap = require("tap");
+var tap = require("tape");
 var child_process = require("child_process");
 var path = require("path");
 
@@ -16,7 +16,7 @@ tap.test("in babel-node", function(tb){
   tb.end();
 });
 
-var __bundle = path.join(__dirname, "../hidden.js");
+var __bundle = path.join(__dirname, "../public/hidden.js");
 tap.test("can browserify", { bail: true }, function(t){
   return new Promise(function(res, rej){
     var b = browserify();

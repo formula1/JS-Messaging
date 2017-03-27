@@ -69,10 +69,14 @@
     "npm-run-all": "^4.0.2",
     "nyc": "^10.1.2",
     "rimraf": "^2.6.1",
+    "sauce-connect-launcher": "^1.2.0",
+    "sauce-results": "^0.1.0",
     "selenium-webdriver": "^3.1.0",
-    "tap": "^10.2.2",
+    "tap-parser": "^5.3.3",
+    "tape": "^4.6.3",
     "tslint": "^4.5.1",
     "typescript": "^2.2.1",
-    "uglify-js": "^2.8.4"
+    "uglify-js": "^2.8.4",
+    "wd": "^1.1.3"
   }
 }
