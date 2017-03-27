@@ -3,6 +3,9 @@ var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
 var defaultErrorHandler = Duplex.defaultErrorHandler;
 
+var util = require("../util");
+var delay = util.delay;
+
 var routeTypes = [METHODS.TRIGGER, METHODS.REQUEST, METHODS.STREAM_START];
 var abortableTypes = [METHODS.REQUEST, METHODS.STREAM_START];
 var routeTypeToMethod = {
@@ -37,9 +40,7 @@ tap.test("errors", function(tv){
         });
         routeDup[method]("/meh", function(data, responder){
           recievedValue = data;
-          return new Promise(function(res){
-            setTimeout(res, 200);
-          }).then(function(){
+          return delay(200).then(function(){
             responder[writeMethod](expectedResp);
             tr.pass("response attempted");
           });
@@ -80,9 +81,7 @@ tap.test("errors", function(tv){
         }, function(err){
           tr.pass("an error was thrown");
           tr.ok(err, "an error was exists");
-          return new Promise(function(res){
-            setTimeout(res, 200);
-          });
+          return delay(200);
         }).then(function(){
           tr.equal(sentValues.length, 0, "no data sent");
           tr.end();
@@ -160,7 +159,7 @@ tap.test("errors", function(tv){
           tr.equal(respValues.length, 0, "no response should have been handled");
           return defaultErrorHandler(err);
         }).then(function(){
-          return new Promise(function(res){ setTimeout(res, 200); });
+          return delay(200);
         }).then(function(){
           tr.ok(respValues.length > 0, "a response should have been sent");
           tr.equal(respValues[0].data, error, "error value is correct");
@@ -349,7 +348,7 @@ tap.test("errors", function(tv){
         path: "/meh",
         data: null,
       }),
-      new Promise(function(res){ setTimeout(res, 200); })
+      delay(200)
     ]).then(function(){
       tr.ok(requestOccured, "request did occur");
       tr.notOk(requestEnded, "request did end");
@@ -393,7 +392,7 @@ tap.test("errors", function(tv){
         path: "/meh",
         data: null,
       }),
-      new Promise(function(res){ setTimeout(res, 200); })
+      delay(200)
     ]).then(function(){
       tr.ok(requestOccured, "request did occur");
       tr.notOk(requestEnded, "request did end");

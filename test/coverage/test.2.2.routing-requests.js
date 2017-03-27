@@ -1,5 +1,7 @@
 var tap = require("tape");
 var Duplex = require("../../dist/node");
+var util = require("../util");
+var delay = util.delay;
 
 var METHODS = Duplex.METHODS;
 
@@ -49,10 +51,8 @@ tap.test("requests", function(tt){
             throw new Error("should have produced an error");
           }, function(messageState){
             tr.pass("multiple calls caused an error");
-            return new Promise(function(res){
-              setTimeout(function(){
-                res(messageState);
-              }, 200);
+            return delay(200).then(function(){
+              return messageState;
             });
           }).then(function(messageState){
             tr.ok(messageState.isEnded, "router captured message");
@@ -92,10 +92,8 @@ tap.test("requests", function(tt){
             path: "/meh",
             data: expectRecValue,
           }).then(function(messageState){
-            return new Promise(function(res){
-              setTimeout(function(){
-                res(messageState);
-              }, 200);
+            return delay(200).then(function(){
+              return messageState;
             });
           }).then(function(messageState){
             tr.ok(messageState.isEnded, "router had no problems");
@@ -120,10 +118,8 @@ tap.test("requests", function(tt){
             path: "/meh",
             data: null,
           }).then(function(messageState){
-            return new Promise(function(res){
-              setTimeout(function(){
-                res(messageState);
-              }, 200);
+            return delay(200).then(function(){
+              return messageState;
             });
           }).then(function(messageState){
             tr.ok(messageState.isEnded, "router had no problems");

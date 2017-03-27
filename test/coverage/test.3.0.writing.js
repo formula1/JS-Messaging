@@ -1,5 +1,7 @@
 var tap = require("tape");
 var Duplex = require("../../dist/node");
+var util = require("../util");
+var delay = util.delay;
 var METHODS = Duplex.METHODS;
 
 tap.test("routing", function(t){
@@ -16,15 +18,17 @@ tap.test("routing", function(t){
         var expectedPath = "/meh";
         var expectedData = {};
         var routeDup = new Duplex();
-        return new Promise(function(res, rej){
-          routeDup.on("data", function(data){
-            res(data);
-          });
-          setTimeout(function(){
-            rej("timed out");
-          }, 200);
-          routeDup[method](expectedPath, expectedData);
-        }).then(function(message){
+        return Promise.race([
+          new Promise(function(res){
+            routeDup.on("data", function(data){
+              res(data);
+            });
+            routeDup[method](expectedPath, expectedData);
+          }),
+          delay(200).then(function(){
+            throw "timed out";
+          })
+        ]).then(function(message){
           tl.pass("method successfully used");
           tl.equal(message.path, expectedPath, "path is as expected");
           tl.equal(message.data, expectedData, "data is as expected");
@@ -45,16 +49,12 @@ tap.test("routing", function(t){
           var expectedPath = "/meh";
           var recievedValues = [];
           var routeDup = new Duplex();
-          return new Promise(function(res){
-            routeDup.on("data", function(data){
-              recievedValues.push(data);
-            });
-            setTimeout(function(){
-              res();
-            }, 200);
-            var methodRet = routeDup[method](expectedPath, expectedData);
-            methodRet.abort();
-          }).then(function(){
+          routeDup.on("data", function(data){
+            recievedValues.push(data);
+          });
+          var methodRet = routeDup[method](expectedPath, expectedData);
+          methodRet.abort();
+          return delay(200).then(function(){
             tr.pass("method successfully used");
             tr.equal(recievedValues.length, 2, "should have recieved 2 messages");
             tr.equal(recievedValues[0].path, expectedPath, "path is as expected");

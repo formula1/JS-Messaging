@@ -1,5 +1,7 @@
 var tap = require("tape");
 var Duplex = require("../../dist/node");
+var util = require("../util");
+var delay = util.delay;
 var METHODS = Duplex.METHODS;
 
 var routeTypeToMethod = {
@@ -30,15 +32,8 @@ tap.test("aborting", function(td){
         });
         routeDup[method]("/meh", function(data, responder){
           recievedValue = data;
-          return new Promise(function(res, rej){
-            setTimeout(function(){
-              try{
-                responder[writeMethod](expectedResp);
-                res();
-              }catch(e){
-                rej(e);
-              }
-            }, 200);
+          return delay(200).then(function(){
+            return responder[writeMethod](expectedResp);
           });
         });
         return Promise.all([
@@ -87,9 +82,7 @@ tap.test("aborting", function(td){
           path: "/meh",
           data: expectedValue,
         }).then(function(){
-          return new Promise(function(res){
-            setTimeout(res, 200);
-          });
+          return delay(200);
         }).then(function(){
           tr.equal(recievedValues.length, 1, "number recieved is correct");
           tr.equal(recievedValues[0], expectedValue, "Value is correct");
@@ -102,9 +95,7 @@ tap.test("aborting", function(td){
             data: expectedValue,
           });
         }).then(function(){
-          return new Promise(function(res){
-            setTimeout(res, 200);
-          });
+          return delay(200);
         }).then(function(){
           tr.equal(recievedValues.length, 2, "number recieved is correct");
           tr.equal(recievedValues[1], expectedValue, "Value is correct");
@@ -152,10 +143,8 @@ tap.test("aborting", function(td){
           path: "/meh",
           data: expectRecValue,
         }).then(function(messageState){
-          return new Promise(function(res){
-            setTimeout(function(){
-              res(messageState);
-            }, 200);
+          return delay(200).then(function(){
+            return messageState;
           });
         }).then(function(messageState){
           tr.ok(messageState.isEnded, "router captured message");
@@ -178,10 +167,8 @@ tap.test("aborting", function(td){
           path: "/meh",
           data: null,
         }).then(function(messageState){
-          return new Promise(function(res){
-            setTimeout(function(){
-              res(messageState);
-            }, 200);
+          return delay(200).then(function(){
+            return messageState;
           });
         }).then(function(messageState){
           tr.ok(messageState.isEnded, "router had no problems");
@@ -197,9 +184,7 @@ tap.test("aborting", function(td){
           values.push(val);
         });
         routeDup[method]("/meh", function(){
-          return new Promise(function(res){
-            setTimeout(res, 200);
-          });
+          return delay(200);
         });
         routeDup[method]("/meh", function(initdata, responder){
           responder[writeMethod]({});
@@ -218,10 +203,8 @@ tap.test("aborting", function(td){
             data: null,
           }),
         ]).then(function(results){
-          return new Promise(function(res){
-            setTimeout(function(){
-              res(results);
-            }, 200);
+          return delay(200).then(function(){
+            return results;
           });
         }).then(function(messageStates){
           tr.ok(messageStates[0].isEnded, "first message did end");
@@ -276,9 +259,7 @@ tap.test("aborting", function(td){
         });
         routeDup[method]("/meh", function(data, responder){
           recievedValue = data;
-          return new Promise(function(res){
-            setTimeout(res, 200);
-          }).then(function(){
+          return delay(200).then(function(){
             responder[writeMethod](writeValue);
           });
         });

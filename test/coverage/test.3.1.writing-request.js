@@ -1,5 +1,7 @@
 var tap = require("tape");
 var Duplex = require("../../dist/node");
+var util = require("../util");
+var delay = util.delay;
 var METHODS = Duplex.METHODS;
 
 tap.test("request", function(tt){
@@ -9,15 +11,17 @@ tap.test("request", function(tt){
     var expectedPath = "/meh";
     var expectedRec = {};
     var expectedRes = {};
-    return new Promise(function(res, rej){
-      routeDup.on("data", function(data){
-        res(data);
-      });
-      setTimeout(function(){
-        rej("timed out");
-      }, 200);
-      p = routeDup.request(expectedPath, expectedRec);
-    }).then(function(message){
+    return Promise.race([
+      new Promise(function(res){
+        routeDup.on("data", function(data){
+          res(data);
+        });
+        p = routeDup.request(expectedPath, expectedRec);
+      }),
+      delay(200).then(function(){
+        throw "timed out";
+      })
+    ]).then(function(message){
       tr.ok(p instanceof Promise, "returens a promise");
       tr.ok(message.id, "message has an id");
       tr.equal(message.path, expectedPath, "path is as expected");
@@ -42,15 +46,17 @@ tap.test("request", function(tt){
     var expectedPath = "/meh";
     var expectedRec = {};
     var expectedRes = {};
-    return new Promise(function(res, rej){
-      routeDup.on("data", function(data){
-        res(data);
-      });
-      setTimeout(function(){
-        rej("timed out");
-      }, 200);
-      p = routeDup.request(expectedPath, expectedRec);
-    }).then(function(message){
+    return Promise.race([
+      new Promise(function(res){
+        routeDup.on("data", function(data){
+          res(data);
+        });
+        p = routeDup.request(expectedPath, expectedRec);
+      }),
+      delay(200).then(function(){
+        throw "timed out";
+      })
+    ]).then(function(message){
       tr.ok(p instanceof Promise, "returens a promise");
       tr.ok(message.id, "message has an id");
       tr.equal(message.path, expectedPath, "path is as expected");
@@ -78,15 +84,17 @@ tap.test("request", function(tt){
     var expectedPath = "/meh";
     var expectedRec = {};
     var expectedRes = {};
-    return new Promise(function(res, rej){
-      routeDup.on("data", function(data){
-        res(data);
-      });
-      setTimeout(function(){
-        rej("timed out");
-      }, 200);
-      p = routeDup.request(expectedPath, expectedRec);
-    }).then(function(message){
+    return Promise.race([
+      new Promise(function(res){
+        routeDup.on("data", function(data){
+          res(data);
+        });
+        p = routeDup.request(expectedPath, expectedRec);
+      }),
+      delay(200).then(function(){
+        throw "timed out";
+      })
+    ]).then(function(message){
       tr.ok(p instanceof Promise, "returens a promise");
       tr.ok(message.id, "message has an id");
       tr.equal(message.path, expectedPath, "path is as expected");
@@ -106,7 +114,7 @@ tap.test("request", function(tt){
         }, function(){
           throw new Error("should not have rejected");
         }),
-        new Promise(function(res){ setTimeout(res, 200); }),
+        delay(200),
       ]).then(function(){
         return message;
       });
@@ -122,7 +130,7 @@ tap.test("request", function(tt){
           tr.equal(value, expectedRes);
           tr.end();
         }),
-        new Promise(function(res, rej){ setTimeout(function(){ rej("timed out"); }, 200); }),
+        delay(200).then(function(){ throw "timed out"; }),
       ]);
     });
   });

@@ -1,6 +1,7 @@
 var tap = require("tape");
 var Duplex = require("../../dist/node");
 var util = require("../util");
+var delay = util.delay;
 var writeToStream = util.writeToStream;
 var METHODS = Duplex.METHODS;
 
@@ -50,10 +51,8 @@ tap.test("streams", function(tt){
             throw new Error("should have produced an error");
           }, function(messageState){
             tr.pass("multiple calls caused an error");
-            return new Promise(function(res){
-              setTimeout(function(){
-                res(messageState);
-              }, 200);
+            return delay(200).then(function(){
+              return messageState;
             });
           }).then(function(messageState){
             tr.ok(messageState.isEnded, "router captured message");
@@ -84,10 +83,8 @@ tap.test("streams", function(tt){
           path: "/meh",
           data: null,
         }).then(function(messageState){
-          return new Promise(function(res){
-            setTimeout(function(){
-              res(messageState);
-            }, 200);
+          return delay(200).then(function(){
+            return messageState;
           });
         }).then(function(messageState){
           tr.ok(messageState.isEnded, "router had no problems");
@@ -116,10 +113,8 @@ tap.test("streams", function(tt){
           path: "/meh",
           data: null,
         }).then(function(messageState){
-          return new Promise(function(res){
-            setTimeout(function(){
-              res(messageState);
-            }, 200);
+          return delay(200).then(function(){
+            return messageState;
           });
         }).then(function(messageState){
           tr.ok(messageState.isEnded, "router had no problems");
@@ -153,10 +148,8 @@ tap.test("streams", function(tt){
         path: "/meh",
         data: null,
       }).then(function(messageState){
-        return new Promise(function(res){
-          setTimeout(function(){
-            res(messageState);
-          }, 200);
+        return delay(200).then(function(){
+          return messageState;
         });
       }).then(function(messageState){
         tr.notOk(messageState.isEnded, "router did not end");
@@ -191,10 +184,8 @@ tap.test("streams", function(tt){
         path: "/meh",
         data: null,
       }).then(function(messageState){
-        return new Promise(function(res){
-          setTimeout(function(){
-            res(messageState);
-          }, 200);
+        return delay(200).then(function(){
+          return messageState;
         });
       }).then(function(messageState){
         tr.ok(messageState.isEnded, "router ended");
@@ -251,11 +242,7 @@ tap.test("streams", function(tt){
           });
         }));
       }).then(function(){
-        return new Promise(function(res){
-          setTimeout(function(){
-            res();
-          }, 200);
-        });
+        return delay(200);
       }).then(function(){
         tr.equal(recieved.length, 6, "The correct number of values were recieved");
         recieved.forEach(function(msg, i){
@@ -291,11 +278,7 @@ tap.test("streams", function(tt){
           data: null,
         });
       }).then(function(){
-        return new Promise(function(res){
-          setTimeout(function(){
-            res();
-          }, 200);
-        });
+        return delay(200);
       }).then(function(){
         tr.equal(recData.length, 0, "no data was recieved");
         tr.equal(didEnd, true, "recieved end event from remote");

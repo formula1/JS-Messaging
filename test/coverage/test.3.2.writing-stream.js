@@ -3,6 +3,7 @@ var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
 var util = require("../util");
 var writeToStream = util.writeToStream;
+var delay = util.delay;
 
 tap.test("stream", function(tt){
   tt.test("recieving", function(tv){
@@ -36,10 +37,8 @@ tap.test("stream", function(tt){
             error: false
           });
         });
-        return new Promise(function(res){
-          setTimeout(function(){
-            res([values, errors, didEnd]);
-          }, 200);
+        return delay(200).then(function(){
+          return [values, errors, didEnd];
         });
       }).then(function(results){
         var values = results[0];
@@ -516,15 +515,15 @@ function initializeDuplexStreamAndMessage(tr){
   var expectedPath = "/meh";
   var expectedRec = {};
   var stream;
-  return new Promise(function(res, rej){
-    routeDup.on("data", function(data){
-      res(data);
-    });
-    setTimeout(function(){
-      rej(new Error("timed out"));
-    }, 200);
-    stream = routeDup.stream(expectedPath, expectedRec);
-  }).then(function(message){
+  return Promise.race([
+    new Promise(function(res){
+      routeDup.on("data", function(data){
+        res(data);
+      });
+      stream = routeDup.stream(expectedPath, expectedRec);
+    }),
+    delay(200).then(function(){ throw "timed out"; })
+  ]).then(function(message){
     tr.ok(message.id, "message has an id");
     tr.equal(message.path, expectedPath, "path is as expected");
     tr.equal(message.data, expectedRec, "data is as expected");
@@ -534,63 +533,53 @@ function initializeDuplexStreamAndMessage(tr){
 }
 
 function collectStreamDataFromRun(stream, run){
-  return new Promise(function(res, rej){
-    var values = [];
-    var errors = [];
-    var didEnd = false;
-    stream.on("data", function(val){
-      values.push(val);
-    });
-    stream.on("error", function(val){
-      errors.push(val);
-    });
-    stream.on("finish", function(){
-      didEnd = true;
-    });
-    setTimeout(function(){
-      res([values, errors, didEnd]);
-    }, 200);
-    try{
-      run();
-    }catch(e){
-      rej(e);
-    }
+  var values = [];
+  var errors = [];
+  var didEnd = false;
+  stream.on("data", function(val){
+    values.push(val);
   });
+  stream.on("error", function(val){
+    errors.push(val);
+  });
+  stream.on("finish", function(){
+    didEnd = true;
+  });
+  return Promise.all([
+    delay(200),
+    Promise.resolve().then(run)
+  ]).then(function(){ return [values, errors, didEnd]; });
 }
 
 function collectEndDataFromRun(dup, stream, run){
-  return new Promise(function(res, rej){
-    var dupvalues = [];
-    var duperrors = [];
-    var values = [];
-    var errors = [];
-    var finishes = 0;
-    var ends = 0;
-    dup.on("data", function(val){
-      dupvalues.push(val);
-    });
-    dup.on("error", function(val){
-      duperrors.push(val);
-    });
-    stream.on("data", function(val){
-      values.push(val);
-    });
-    stream.on("error", function(val){
-      errors.push(val);
-    });
-    stream.on("finish", function(){
-      finishes++;
-    });
-    stream.on("end", function(){
-      ends++;
-    });
-    setTimeout(function(){
-      res([dupvalues, duperrors, values, errors, finishes, ends]);
-    }, 200);
-    try{
-      run();
-    }catch(e){
-      rej(e);
-    }
+  var dupvalues = [];
+  var duperrors = [];
+  var values = [];
+  var errors = [];
+  var finishes = 0;
+  var ends = 0;
+  dup.on("data", function(val){
+    dupvalues.push(val);
+  });
+  dup.on("error", function(val){
+    duperrors.push(val);
+  });
+  stream.on("data", function(val){
+    values.push(val);
+  });
+  stream.on("error", function(val){
+    errors.push(val);
+  });
+  stream.on("finish", function(){
+    finishes++;
+  });
+  stream.on("end", function(){
+    ends++;
+  });
+  return Promise.all([
+    delay(200),
+    Promise.resolve().then(run)
+  ]).then(function(){
+    return [dupvalues, duperrors, values, errors, finishes, ends];
   });
 }

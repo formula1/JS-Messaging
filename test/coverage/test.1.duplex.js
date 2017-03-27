@@ -2,6 +2,7 @@ var tap = require("tape");
 var Duplex = require("../../dist/node");
 var METHODS = Duplex.METHODS;
 var util = require("../util");
+var delay = util.delay;
 var writeToStream = util.writeToStream;
 
 tap.test("Duplex", function(t){
@@ -72,9 +73,7 @@ tap.test("Duplex", function(t){
       duplex.on("data", function(data){
         recData.push(data);
       });
-      return new Promise(function(res){
-        setTimeout(res, 200);
-      });
+      return delay(200);
     }).then(function(){
       tt.equal(recData.length, 1, "one item was added");
       tt.equal(recData[0], toPush, "item is as expected");
@@ -111,6 +110,8 @@ tap.test("Duplex", function(t){
         path: "/meh",
         data: expectedValue,
       })).then(function(){
+        return delay(200);
+      }).then(function(){
         tr.equal(recievedValue, expectedValue, "Recieved Value is correct");
         tr.end();
       });
@@ -149,9 +150,7 @@ tap.test("Duplex", function(t){
       });
       routeDup.onRequest("/error", function(data, responder){
         recievedValue.push(data);
-        return new Promise(function(res){
-          setTimeout(res, 100);
-        }).then(function(){
+        return delay(200).then(function(){
           throw new Error("an error");
         }).then(function(){
           responder.resolve(expectedRes[0]);
@@ -175,9 +174,7 @@ tap.test("Duplex", function(t){
           data: expectedRec[1],
         })
       ]).then(function(){
-        return new Promise(function(res){
-          setTimeout(res, 200);
-        });
+        return delay(200);
       }).then(function(){
         tr.pass("no errors occured emitted");
         tr.equal(recievedValue.length, 2, "Recieved 2 values");
