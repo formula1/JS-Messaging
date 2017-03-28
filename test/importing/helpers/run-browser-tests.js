@@ -1,32 +1,34 @@
-var __environmentsDir = "/test/importing/";
-var fileserverurl = "http://fileserver:80";
+var fileserverurl = "http://fileserver";
 
 function formatFileToUrl(file){
-  return fileserverurl + __environmentsDir + "/" + file;
+  return fileserverurl + "/" + file;
 }
 
 module.exports = function runBrowserTests(driver, t){
-  return driver.then(function(){
-    return t.test("main thread", function(tm){
-      return runUrl(driver, tm, formatFileToUrl("mainthread.html"));
-    });
-  }).then(function(){
-    return t.test("webworker thread", function(tm){
-      return runUrl(driver, tm, formatFileToUrl("webworker.html"));
-    });
-  }).then(function(){
-    return t.test("sharedworker thread", function(tm){
-      return runUrl(driver, tm, formatFileToUrl("sharedworker.html"));
-    });
-  }).then(function(){
-    t.end();
+  t.on("end", function(){
+    driver.quit();
   });
+  t.test("main thread", function(tm){
+    return runUrl(driver, tm, formatFileToUrl("mainthread.html"));
+  });
+  t.test("webworker thread", function(tm){
+    return runUrl(driver, tm, formatFileToUrl("webworker.html"));
+  });
+  t.test("sharedworker thread", function(tm){
+    return runUrl(driver, tm, formatFileToUrl("sharedworker.html"));
+  });
+
+  // TODO: Test service worker
+  // t.test("serviceworker thread", function(tm){
+  //   return runUrl(driver, tm, formatFileToUrl("serviceworker.html"));
+  // });
+  t.end();
 };
 
 function runUrl(driver, tm, url){
   return driver.get(url)
   .then(function(){
-    return driver.manage().timeouts().pageLoadTimeout(30 * 1000);
+    return waitForLoad(driver);
   }).then(function(){
     return driver.manage().logs().get("browser").catch(function(err){
       if(
@@ -38,7 +40,7 @@ function runUrl(driver, tm, url){
       throw err;
     }).then((logs) =>{
       logs.forEach(function(log){
-        return tm.threw(log.message);
+        throw log.message;
       });
       tm.pass("No errors on load");
     });
@@ -49,8 +51,29 @@ function runUrl(driver, tm, url){
         "window.start().then(function(){ callback(); }, callback)"
       )
     );
-  }).then(function(){
-    tm.pass("No errors on run");
+  }).then(function(err){
+    tm.notOk(err, "No errors on run");
     tm.end();
   });
+}
+
+function waitForLoad(driver){
+  return Promise.race([
+    new Promise(function(res){ setTimeout(res, 30000); }).then(function(){
+      throw new Error("timed out");
+    }),
+    driver.executeAsyncScript(
+      `
+        var callback = arguments[arguments.length - 1];
+        if(document.readyState == 'complete'){
+          callback();
+        } else {
+          window.addEventListener(\"load\", function(){ callback() })
+        }
+      `
+    )
+  ]);
+
+  // return driver.manage().timeouts().pageLoadTimeout(30 * 1000);
+  // return driver.wait(until.elementLocated(By.id("footer")), 10000);
 }

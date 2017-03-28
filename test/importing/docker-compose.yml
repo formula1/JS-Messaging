@@ -11,8 +11,6 @@ services:
     image: selenium/hub
     ports:
       - "4444:4444"
-    depends_on:
-      - fileserver
   firefox:
     image: selenium/node-firefox
     environment:

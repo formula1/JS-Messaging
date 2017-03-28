@@ -29,35 +29,19 @@ tap.test("can browserify", { bail: true }, function(t){
   });
 });
 
-var webdriver = require("selenium-webdriver");
+var setupBrowsers = require("../helpers/setup-browser").setup;
 var runBrowserTests = require("../helpers/run-browser-tests");
-
-var logging = webdriver.logging;
-var pref = new logging.Preferences();
-pref.setLevel(logging.Type.BROWSER, logging.Level.SEVERE);
-
 tap.test("in browser", function(tb){
-  return tb.test("firefox", function(tbf){
-    var driver = new webdriver.Builder()
-        .forBrowser("firefox")
-        .setLoggingPrefs(pref)
-        .usingServer("http://localhost:4444/wd/hub")
-        .build();
-    return runBrowserTests(driver, tbf);
-  }).then(function(){
-    return tb.test("chrome", function(tbc){
-      var driver = new webdriver.Builder()
-          .forBrowser("chrome")
-          .setLoggingPrefs(pref)
-          .usingServer("http://localhost:4444/wd/hub")
-          .build();
-      return runBrowserTests(driver, tbc);
+  var browsernames = ["chrome", "firefox"];
+  return Promise.all(browsernames.map(setupBrowsers)).then(function(drivers){
+    tb.plan(browsernames.length);
+    drivers.forEach(function(driver, i){
+      tb.test(browsernames[i], function(tbb){
+        return runBrowserTests(driver, tbb);
+      });
     });
-  }).then(function(){
-    tb.end();
   });
-}).then(function(){
+});
+tap.onFinish(function(){
   fs.unlinkSync(__bundle);
 });
-
-tap.end();

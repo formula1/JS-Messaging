@@ -8,32 +8,21 @@
   <script type="text/javascript">
     window.start = function(){
       return new Promise(function(res, rej){
-        var worker = new SharedWorker(fnToBlobUrl(function(location){
-          var scriptUrl = location + "/hidden.js";
-          self.importScripts(scriptUrl);
-          self.onconnect = function(e){
-            var fn = require("start-fn");
-            fn();
-            var port = e.ports[0];
-            port.postMessage("finished");
-
-            // Required when using addEventListener.
-            // Otherwise called implicitly by onmessage setter.
-            port.start();
-          };
-        }, [window.location.protocol + "//" + window.location.host]));
+        var to;
+        var worker = new SharedWorker("/shared-worker.js");
         worker.onerror = rej;
         worker.port.onmessage = function(event){
           clearTimeout(to);
           if(event.data !== "finished"){
-            rej("improper data:", "finished", event.data);
+            rej("improper data:" + event.data);
           }
           res();
         };
+        worker.port.start();
+        worker.port.postMessage("start");
         to = setTimeout(function(){
           rej("timedout");
-        }, 1000);
-        worker.port.start();
+        }, 10 * 1000);
       });
     };
   </script>

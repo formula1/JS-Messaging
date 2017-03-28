@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+<body>
+  <script type="text/javascript" src="/fn-to-bloburl.js" ></script>
+  <script type="text/javascript">
+    window.start = function(){
+      return navigator.serviceWorker.register("/service-worker.js")
+      .then(function(registration){
+        // Registration was successful
+        return new Promise(function(res, rej){
+          var to;
+          var channel = new MessageChannel();
+          channel.port1.onmessage = function(e){
+            clearTimeout(to);
+            if(event.data !== "finished"){
+              rej("improper data:" + event.data);
+            }
+            res();
+          };
+          var worker = registration.active;
+          worker.onerror = rej;
+          worker.postMessage("hello", [channel.port2]);
+          to = setTimeout(function(){
+            rej("timedout");
+          }, 10 * 1000);
+        });
+      });
+    };
+  </script>
+  <h1 id="footer">Footer</h1>
+</body>
+</html>

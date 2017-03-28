@@ -8,24 +8,20 @@
   <script type="text/javascript">
     window.start = function(){
       return new Promise(function(res, rej){
-        var worker = new Worker(fnToBlobUrl(function(location){
-          var scriptUrl = location + "/hidden.js";
-          self.importScripts(scriptUrl);
-          var fn = require("start-fn");
-          fn();
-          self.postMessage("finished");
-        }, [window.location.protocol + "//" + window.location.host]));
+        var to;
+        var worker = new Worker("/web-worker.js");
         worker.onerror = rej;
         worker.onmessage = function(event){
           clearTimeout(to);
           if(event.data !== "finished"){
-            rej("improper data:", "finished", event.data);
+            rej("improper data:" + event.data);
           }
           res();
         };
+        worker.postMessage("start");
         to = setTimeout(function(){
           rej("timedout");
-        }, 1000);
+        }, 10 * 1000);
       });
     };
   </script>
