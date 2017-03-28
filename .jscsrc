@@ -1,8 +1,8 @@
 {
   "preset": "airbnb",
   "validateQuoteMarks": "\"",
-  "disallowSpaceAfterKeywords": ["if", "function", "while", "for"],
-  "requireSpaceAfterKeywords" : ["else", "return"],
+  "disallowSpaceAfterKeywords": ["if", "else", "function", "while", "for"],
+  "requireSpaceAfterKeywords" : ["return"],
   "requireSpaceBeforeBlockStatements": false,
   "disallowSpaceBeforeBlockStatements": true,
 
