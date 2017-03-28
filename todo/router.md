@@ -1,5 +1,0 @@
-- Regexp based routing
-- String based routing
-- checking if client sends an error (should never happen)
-- Removing Listeners
-- Destruction of Messengers
