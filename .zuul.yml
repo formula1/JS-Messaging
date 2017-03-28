@@ -31,8 +31,6 @@ browsers:
   #   platform: Linux
   # - name: opera
   #   version: latest
-  #   platform: Windows 10
-  # - name: opera
   #   version: latest
   #   platform: "Mac 10.12"
   # - name: safari
@@ -40,6 +38,6 @@ browsers:
   # - name: ie
   #   version: "11"
   #   platform: Windows 10
-  - name: microsoftedge
-    version: latest
-    platform: "Windows 10"
+  # - name: microsoftedge
+  #   version: latest
+  #   platform: "Windows 10"
