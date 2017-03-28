@@ -1,5 +1,9 @@
 # Distributed Messenger Utility
-[![Coverage Status](https://coveralls.io/repos/github/formula1/JS-Messaging/badge.svg?branch=master)](https://coveralls.io/github/formula1/JS-Messaging?branch=master) [![Build Status](https://travis-ci.org/formula1/JS-Messaging.svg?branch=master)](https://travis-ci.org/formula1/JS-Messaging)
+[![Build Status](https://travis-ci.org/formula1/JS-Messaging.svg?branch=master)](https://travis-ci.org/formula1/JS-Messaging)
+
+[![Coverage Status](https://coveralls.io/repos/github/formula1/JS-Messaging/badge.svg?branch=master)](https://coveralls.io/github/formula1/JS-Messaging?branch=master)
+
+[![Build Status](https://saucelabs.com/browser-matrix/formula1.svg)](https://saucelabs.com/beta/builds/fd6c23896d5947baa9a2470e95de6ee8)
 
 This is a duplex stream implemented inorder to support multiple formats of communication.
 
@@ -27,7 +31,7 @@ api each environment this provides a clean interface.
 
 ## Competitors
 - http://www.jsonrpc.org/specification
--
+- https://github.com/postaljs
 
 ## Roadmap
 - Become Heavily Involved with [protobuf](https://www.npmjs.com/package/protobufjs)
