@@ -38,6 +38,8 @@ tap.test("Duplex", function(t){
       duplex.destroy();
       res();
     }).then(function(){
+      return delay(200);
+    }).then(function(){
       tt.equal(recData.length, 0, "No data was recieved");
       listeners.forEach(function(key){
         tt.ok(successful.has(key), "event " + key + " was fired");
