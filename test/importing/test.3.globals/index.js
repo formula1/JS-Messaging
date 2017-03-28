@@ -4,6 +4,7 @@ var path = require("path");
 
 var fs = require("fs");
 var browserify = require("browserify");
+var Promise = require("es6-promise");
 
 tap.test("in node", function(tn){
   child_process.execSync(`node ${path.join(__dirname, "./globals.js")}`);

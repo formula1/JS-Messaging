@@ -1,3 +1,5 @@
+/* globals Promise */
+
 self.addEventListener("install", function(event){
   self.importScripts("/hidden.js");
   event.waitUntil(Promise.resolve());

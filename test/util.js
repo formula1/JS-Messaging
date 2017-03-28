@@ -1,4 +1,4 @@
-
+var Promise = require("es6-promise");
 
 module.exports.delay = function(time){
   return new Promise(function(res){

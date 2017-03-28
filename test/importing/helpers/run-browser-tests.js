@@ -1,4 +1,5 @@
 var fileserverurl = "http://fileserver";
+var Promise = require("es6-promise");
 
 function formatFileToUrl(file){
   return fileserverurl + "/" + file;

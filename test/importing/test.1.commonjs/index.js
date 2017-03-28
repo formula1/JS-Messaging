@@ -4,6 +4,7 @@ var path = require("path");
 var child_process = require("child_process");
 var browserify = require("browserify");
 var fs = require("fs");
+var Promise = require("es6-promise");
 
 tap.test("can require", function(t){
   child_process.execSync(`node ${path.join(__dirname, "./commonjs.js")}`);

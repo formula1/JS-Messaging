@@ -4,6 +4,7 @@ var path = require("path");
 
 var fs = require("fs");
 var browserify = require("browserify");
+var Promise = require("es6-promise");
 
 var __root = path.resolve(__dirname, "../../../");
 
