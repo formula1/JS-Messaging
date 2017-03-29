@@ -1,6 +1,6 @@
 ui: tape
-browser_retries: 2
-browser_output_timeout: 15000
+browser_retries: 3
+browser_output_timeout: 120000
 browsers:
   - name: chrome
     version: latest
@@ -26,18 +26,21 @@ browsers:
     version: latest
   - name: android
     version: latest
-  # - name: opera
-  #   version: latest
-  #   platform: Linux
-  # - name: opera
-  #   version: latest
-  #   version: latest
+  - name: opera
+    version: latest
+    platform: Linux
+  - name: opera
+    version: latest
+    platform: "Mac 10.12"
+  - name: opera
+    version: latest
+    platform: "Windows 10"
   #   platform: "Mac 10.12"
   # - name: safari
   #   version: latest
   # - name: ie
   #   version: "11"
   #   platform: Windows 10
-  # - name: microsoftedge
-  #   version: latest
-  #   platform: "Windows 10"
+  - name: microsoftedge
+    version: latest
+    platform: "Windows 10"
