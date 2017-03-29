@@ -1,9 +1,10 @@
 # Distributed Messenger Utility
 [![Build Status](https://travis-ci.org/formula1/JS-Messaging.svg?branch=master)](https://travis-ci.org/formula1/JS-Messaging)
-
 [![Coverage Status](https://coveralls.io/repos/github/formula1/JS-Messaging/badge.svg?branch=master)](https://coveralls.io/github/formula1/JS-Messaging?branch=master)
+[![dependencies Status](https://david-dm.org/formula1/JS-Messaging/status.svg)](https://david-dm.org/formula1/JS-Messaging)
+[![devDependencies Status](https://david-dm.org/formula1/JS-Messaging/dev-status.svg)](https://david-dm.org/formula1/JS-Messaging?type=dev)
 
-[![Build Status](https://saucelabs.com/browser-matrix/formula1.svg)](https://saucelabs.com/beta/builds/fd6c23896d5947baa9a2470e95de6ee8)
+[![Build Status](https://saucelabs.com/browser-matrix/formula1.svg)](https://saucelabs.com/beta/builds/9fb91654fb57484aaba614c50ce70fca)
 
 This is a duplex stream implemented inorder to support multiple formats of communication.
 
