@@ -41,7 +41,7 @@
     "docs": "npm-run-all clean:docs build:docs",
     "badges": "npm-run-all badges:*",
     "badges:coverage": "nyc report --reporter=text-lcov | coveralls",
-    "badges:browser": "node -r dotenv/config test/tunnel/bin test/coverage/*",
+    "badges:browser": "node -r dotenv/config test/tunnel/bin.js test/coverage/*",
     "not-test:import": "npm-run-all test:import:* || npm run test:import:clean",
     "test:import:build": "docker-compose -f ./test/importing/docker-compose.yml up --force-recreate -d && sleep 10",
     "test:import:commonjs": "babel-node --presets es2015 test/importing/test.1.commonjs",

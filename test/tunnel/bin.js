@@ -5,6 +5,18 @@ var mapping = {
   SAUCE_ACCESS_KEY: "sauce_key",
 };
 
+var path = require("path");
+var indexOfFile = -1;
+process.argv.forEach(function(name, i){
+  var file = path.resolve(process.cwd(), name);
+  if(file === __filename){
+    indexOfFile = i;
+  }
+});
+if(indexOfFile === -1){
+  throw new Error("arguments unable to be found");
+}
+
 var config = require("./config")(mapping);
 var startEnd = require("./start-end");
 var child_process = require("child_process");
@@ -12,10 +24,11 @@ startEnd.start(config, function(err, tunnel){
   if(err) throw err;
   var c = child_process.spawn(
     "node_modules/.bin/zuul",
-    ["--sauce-connect", tunnel.id, "--"].concat(process.argv.slice(2)),
+    ["--sauce-connect", tunnel.id, "--"].concat(process.argv.slice(indexOfFile + 1)),
     {
       cwd: process.cwd(),
-      stdio: ["ignore", "inherit", "inherit"]
+      stdio: ["ignore", "inherit", "inherit"],
+      env: process.env,
     }
   );
   var exited = false;
