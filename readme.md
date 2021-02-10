@@ -42,7 +42,7 @@ api each environment this provides a clean interface.
 
 ### Construct and Use
 ```javascript
-var MessageDuplex = require("message-duplex");
+var MessageDuplex = require("common-messenger-interface");
 var messageduplex = new MessageDuplex();
 
 myOtherStream.pipe(messageduplex).pipe(myOtherStream)
