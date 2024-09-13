@@ -17,7 +17,7 @@
   "dependencies": {
     "es6-promise": "^4.1.0",
     "node-event-emitter": "0.0.1",
-    "path-to-regexp": "^1.7.0",
+    "path-to-regexp": "^8.0.0",
     "readable-stream": "^2.2.3",
     "tslib": "^1.6.0"
   },
